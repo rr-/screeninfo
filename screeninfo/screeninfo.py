@@ -85,6 +85,7 @@ class MonitorEnumeratorX11(object):
 
 def get_monitors():
     enumerators = [MonitorEnumeratorWindows, MonitorEnumeratorX11]
+    chosen = None
     for e in enumerators:
         if e.detect():
             chosen = e
