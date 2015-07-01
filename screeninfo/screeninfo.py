@@ -27,6 +27,7 @@ class MonitorEnumeratorWindows(object):
         import ctypes
         import ctypes.wintypes
         monitors = []
+
         def callback(monitor, dc, rect, data):
             rct = rect.contents
             monitors.append(Monitor(
@@ -35,14 +36,17 @@ class MonitorEnumeratorWindows(object):
                 rct.right - rct.left,
                 rct.bottom - rct.top))
             return 0
+
         MonitorEnumProc = ctypes.WINFUNCTYPE(
             ctypes.c_int,
             ctypes.c_ulong,
             ctypes.c_ulong,
             ctypes.POINTER(ctypes.wintypes.RECT),
             ctypes.c_double)
+
         ctypes.windll.user32.EnumDisplayMonitors(
             0, 0, MonitorEnumProc(callback), 0)
+
         return monitors
 
 class MonitorEnumeratorCygwin(object):
@@ -52,19 +56,56 @@ class MonitorEnumeratorCygwin(object):
 
     @staticmethod
     def get_monitors():
-        import json
-        import subprocess
-        ps_cmd = [
-            'Add-Type -AssemblyName System.Windows.Forms',
-            '[System.Windows.Forms.Screen]::AllScreens|ConvertTo-Json'
-        ]
-        ps = subprocess.Popen(
-            ['powershell', '-command', ';'.join(ps_cmd)],
-            stdout=subprocess.PIPE)
-        output = ps.stdout.read().decode('utf-8')
-        bounds = [m['Bounds'] for m in json.loads(output)]
-        return [
-            Monitor(b['X'], b['Y'], b['Width'], b['Height']) for b in bounds]
+        import ctypes
+        user32 = ctypes.cdll.LoadLibrary('user32.dll')
+
+        LONG = ctypes.c_int32
+        BOOL = ctypes.c_int
+        HANDLE = ctypes.c_void_p
+        HMONITOR = HANDLE
+        HDC = HANDLE
+        if ctypes.sizeof(ctypes.c_long) == ctypes.sizeof(ctypes.c_void_p):
+            WPARAM = ctypes.c_ulong
+            LPARAM = ctypes.c_long
+        elif ctypes.sizeof(ctypes.c_longlong) == ctypes.sizeof(ctypes.c_void_p):
+            WPARAM = ctypes.c_ulonglong
+            LPARAM = ctypes.c_longlong
+
+        class RECT(ctypes.Structure):
+            _fields_ = [
+                ('left', LONG),
+                ('top', LONG),
+                ('right', LONG),
+                ('bottom', LONG)
+            ]
+
+        MonitorEnumProc = ctypes.CFUNCTYPE(
+            BOOL,
+            HMONITOR,
+            HDC,
+            ctypes.POINTER(RECT),
+            LPARAM)
+
+        user32.EnumDisplayMonitors.argtypes = [
+            HANDLE,
+            ctypes.POINTER(RECT),
+            MonitorEnumProc,
+            LPARAM]
+        user32.EnumDisplayMonitors.restype = ctypes.c_bool
+
+        monitors = []
+
+        def callback(monitor, dc, rect, data):
+            rct = rect.contents
+            monitors.append(Monitor(
+                rct.left,
+                rct.top,
+                rct.right - rct.left,
+                rct.bottom - rct.top))
+            return 0
+
+        user32.EnumDisplayMonitors(None, None, MonitorEnumProc(callback), 0)
+        return monitors
 
 class MonitorEnumeratorX11(object):
     @staticmethod
