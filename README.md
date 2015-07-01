@@ -5,6 +5,7 @@ Fetch location and size of physical screens.
 
 ### Supported environments
 
+- Microsoft Windows
 - Microsoft Windows / Cygwin
 - GNU/Linux / X11
 

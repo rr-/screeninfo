@@ -20,6 +20,34 @@ class Monitor(object):
 class MonitorEnumeratorWindows(object):
     @staticmethod
     def detect():
+        return 'win32' in sys.platform
+
+    @staticmethod
+    def get_monitors():
+        import ctypes
+        import ctypes.wintypes
+        monitors = []
+        def callback(monitor, dc, rect, data):
+            rct = rect.contents
+            monitors.append(Monitor(
+                rct.left,
+                rct.top,
+                rct.right - rct.left,
+                rct.bottom - rct.top))
+            return 0
+        MonitorEnumProc = ctypes.WINFUNCTYPE(
+            ctypes.c_int,
+            ctypes.c_ulong,
+            ctypes.c_ulong,
+            ctypes.POINTER(ctypes.wintypes.RECT),
+            ctypes.c_double)
+        ctypes.windll.user32.EnumDisplayMonitors(
+            0, 0, MonitorEnumProc(callback), 0)
+        return monitors
+
+class MonitorEnumeratorCygwin(object):
+    @staticmethod
+    def detect():
         return 'cygwin' in sys.platform
 
     @staticmethod
@@ -84,7 +112,10 @@ class MonitorEnumeratorX11(object):
         return [Monitor(i.x, i.y, i.width, i.height) for i in infos]
 
 def get_monitors():
-    enumerators = [MonitorEnumeratorWindows, MonitorEnumeratorX11]
+    enumerators = [
+        MonitorEnumeratorWindows,
+        MonitorEnumeratorCygwin,
+        MonitorEnumeratorX11]
     chosen = None
     for e in enumerators:
         if e.detect():
