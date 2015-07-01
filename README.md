@@ -12,7 +12,11 @@ More environments are going to be added soon.
 
 ### Installation
 
-`pip install screeninfo`
+    pip install screeninfo
+
+If you install it from sources:
+
+    python3 setup.py install
 
 ### Usage
 
