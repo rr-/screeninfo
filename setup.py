@@ -4,7 +4,7 @@ setup(
   packages = ['screeninfo'],
   version = '0.1',
   description = 'Fetch location and size of physical screens.',
-  author = 'Marcin Kurczewski',
+  author = 'rr-',
   author_email = 'rr-@sakuya.pl',
   url = 'https://github.com/rr-/screeninfo',
   download_url = 'https://github.com/rr-/screeninfo/tarball/0.1',
