@@ -26,5 +26,5 @@ If you install it from sources:
 
 **Output**:
 
->monitor(1920x1080+1920+0)
+>monitor(1920x1080+1920+0)  
 >monitor(1920x1080+0+0)
