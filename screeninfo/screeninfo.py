@@ -35,7 +35,7 @@ class MonitorEnumeratorWindows(object):
                 rct.top,
                 rct.right - rct.left,
                 rct.bottom - rct.top))
-            return 0
+            return 1
 
         MonitorEnumProc = ctypes.WINFUNCTYPE(
             ctypes.c_int,
@@ -102,7 +102,7 @@ class MonitorEnumeratorCygwin(object):
                 rct.top,
                 rct.right - rct.left,
                 rct.bottom - rct.top))
-            return 0
+            return 1
 
         user32.EnumDisplayMonitors(None, None, MonitorEnumProc(callback), 0)
         return monitors
