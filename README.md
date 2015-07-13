@@ -9,7 +9,8 @@ Fetch location and size of physical screens.
 - MS Windows: Cygwin
 - GNU/Linux: X11 (through Xinerama)
 
-More environments are going to be added soon.
+I don't plan on testing OSX or other environments myself. For this reason,
+I strongly encourage pull requests.
 
 ### Installation
 
