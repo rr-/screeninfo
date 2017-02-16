@@ -152,11 +152,37 @@ class MonitorEnumeratorX11(object):
 
         return [Monitor(i.x, i.y, i.width, i.height) for i in infos]
 
+class MonitorEnumeratorOSX(object):
+    @staticmethod
+    def detect():
+        return 'darwin' in sys.platform
+
+    @staticmethod
+    def get_monitors():
+        from pyobjus import autoclass
+        from pyobjus.dylib_manager import load_framework, INCLUDE
+        load_framework(INCLUDE.AppKit)
+
+        screens = autoclass('NSScreen').screens()
+        monitors = []
+
+        for i in range(screens.count()):
+            f = screens.objectAtIndex_(i).frame
+            if callable(f):
+                f = f()
+
+            monitors.append(Monitor(f.origin.x, f.origin.y, f.size.width, f.size.height))
+
+        return monitors
+
+
 def get_monitors():
     enumerators = [
         MonitorEnumeratorWindows,
         MonitorEnumeratorCygwin,
-        MonitorEnumeratorX11]
+        MonitorEnumeratorX11,
+        MonitorEnumeratorOSX,
+    ]
     chosen = None
     for e in enumerators:
         if e.detect():

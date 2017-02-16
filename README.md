@@ -8,6 +8,7 @@ Fetch location and size of physical screens.
 - MS Windows
 - MS Windows: Cygwin
 - GNU/Linux: X11 (through Xinerama)
+- OSX: (through PyOBJus)
 
 I don't plan on testing OSX or other environments myself. For this reason,
 I strongly encourage pull requests.
@@ -28,5 +29,5 @@ If you install it from sources:
 
 **Output**:
 
->monitor(1920x1080+1920+0)  
+>monitor(1920x1080+1920+0)
 >monitor(1920x1080+0+0)
