@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 class Monitor(object):
     x = 0
     y = 0
@@ -17,6 +18,7 @@ class Monitor(object):
         return 'monitor(%dx%d+%d+%d)' % (
             self.width, self.height, self.x, self.y)
 
+
 class MonitorEnumeratorWindows(object):
     @staticmethod
     def detect():
@@ -28,7 +30,7 @@ class MonitorEnumeratorWindows(object):
         import ctypes.wintypes
         monitors = []
 
-        def callback(monitor, dc, rect, data):
+        def callback(_monitor, _dc, rect, _data):
             rct = rect.contents
             monitors.append(Monitor(
                 rct.left,
@@ -49,6 +51,7 @@ class MonitorEnumeratorWindows(object):
 
         return monitors
 
+
 class MonitorEnumeratorCygwin(object):
     @staticmethod
     def detect():
@@ -64,10 +67,12 @@ class MonitorEnumeratorCygwin(object):
         HANDLE = ctypes.c_void_p
         HMONITOR = HANDLE
         HDC = HANDLE
-        if ctypes.sizeof(ctypes.c_long) == ctypes.sizeof(ctypes.c_void_p):
+
+        ptr_size = ctypes.sizeof(ctypes.c_void_p)
+        if ptr_size == ctypes.sizeof(ctypes.c_long):
             WPARAM = ctypes.c_ulong
             LPARAM = ctypes.c_long
-        elif ctypes.sizeof(ctypes.c_longlong) == ctypes.sizeof(ctypes.c_void_p):
+        elif ptr_size == ctypes.sizeof(ctypes.c_longlong):
             WPARAM = ctypes.c_ulonglong
             LPARAM = ctypes.c_longlong
 
@@ -95,7 +100,7 @@ class MonitorEnumeratorCygwin(object):
 
         monitors = []
 
-        def callback(monitor, dc, rect, data):
+        def callback(_monitor, _dc, rect, _data):
             rct = rect.contents
             monitors.append(Monitor(
                 rct.left,
@@ -106,6 +111,7 @@ class MonitorEnumeratorCygwin(object):
 
         user32.EnumDisplayMonitors(None, None, MonitorEnumProc(callback), 0)
         return monitors
+
 
 class MonitorEnumeratorX11(object):
     @staticmethod
@@ -152,7 +158,8 @@ class MonitorEnumeratorX11(object):
 
         return [Monitor(i.x, i.y, i.width, i.height) for i in infos]
 
-class MonitorEnumeratorOSX(object):
+
+class MonitorEnumeratorOsx(object):
     @staticmethod
     def detect():
         return 'darwin' in sys.platform
@@ -171,7 +178,8 @@ class MonitorEnumeratorOSX(object):
             if callable(f):
                 f = f()
 
-            monitors.append(Monitor(f.origin.x, f.origin.y, f.size.width, f.size.height))
+            monitors.append(
+                Monitor(f.origin.x, f.origin.y, f.size.width, f.size.height))
 
         return monitors
 
@@ -181,7 +189,7 @@ def get_monitors():
         MonitorEnumeratorWindows,
         MonitorEnumeratorCygwin,
         MonitorEnumeratorX11,
-        MonitorEnumeratorOSX,
+        MonitorEnumeratorOsx,
     ]
     chosen = None
     for e in enumerators:
@@ -190,6 +198,7 @@ def get_monitors():
     if chosen is None:
         raise NotImplementedError('This environment is not supported.')
     return chosen.get_monitors()
+
 
 if __name__ == '__main__':
     for m in get_monitors():
