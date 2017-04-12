@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='screeninfo',
     packages=['screeninfo'],
-    version='0.2.2',
+    version='0.3',
     description='Fetch location and size of physical screens.',
     author='rr-',
     author_email='rr-@sakuya.pl',
