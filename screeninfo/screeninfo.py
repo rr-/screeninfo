@@ -21,10 +21,6 @@ class Monitor(object):
 
 class MonitorEnumeratorWindows(object):
     @staticmethod
-    def detect():
-        return 'win32' in sys.platform
-
-    @staticmethod
     def get_monitors():
         import ctypes
         import ctypes.wintypes
@@ -53,10 +49,6 @@ class MonitorEnumeratorWindows(object):
 
 
 class MonitorEnumeratorCygwin(object):
-    @staticmethod
-    def detect():
-        return 'cygwin' in sys.platform
-
     @staticmethod
     def get_monitors():
         import ctypes
@@ -115,10 +107,6 @@ class MonitorEnumeratorCygwin(object):
 
 class MonitorEnumeratorX11(object):
     @staticmethod
-    def detect():
-        return 'DISPLAY' in os.environ
-
-    @staticmethod
     def get_monitors():
         import ctypes
         import ctypes.util
@@ -161,10 +149,6 @@ class MonitorEnumeratorX11(object):
 
 class MonitorEnumeratorOsx(object):
     @staticmethod
-    def detect():
-        return 'darwin' in sys.platform
-
-    @staticmethod
     def get_monitors():
         from pyobjus import autoclass
         from pyobjus.dylib_manager import load_framework, INCLUDE
@@ -184,23 +168,26 @@ class MonitorEnumeratorOsx(object):
         return monitors
 
 
-def get_enumerator():
-    enumerators = [
-        MonitorEnumeratorWindows,
-        MonitorEnumeratorCygwin,
-        MonitorEnumeratorX11,
-        MonitorEnumeratorOsx,
-    ]
-    chosen = None
-    for e in enumerators:
-        if e.detect():
-            return e
+_ENUMERATORS = {
+    'windows': MonitorEnumeratorWindows,
+    'cygwin': MonitorEnumeratorCygwin,
+    'x11': MonitorEnumeratorX11,
+    'osx': MonitorEnumeratorOsx,
+}
+
+
+def _get_enumerator():
+    for enumerator in _ENUMERATORS.values():
+        try:
+            enumerator.get_monitors()
+            return enumerator
+        except:
+            pass
     raise NotImplementedError('This environment is not supported.')
 
 
-def get_monitors(enumerator=None):
-    if enumerator is None:
-        enumerator = get_enumerator()
+def get_monitors(name=None):
+    enumerator = _ENUMERATORS[name] if name else _get_enumerator()
     return enumerator.get_monitors()
 
 
