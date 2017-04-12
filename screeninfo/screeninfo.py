@@ -184,7 +184,7 @@ class MonitorEnumeratorOsx(object):
         return monitors
 
 
-def get_monitors():
+def get_enumerator():
     enumerators = [
         MonitorEnumeratorWindows,
         MonitorEnumeratorCygwin,
@@ -194,10 +194,14 @@ def get_monitors():
     chosen = None
     for e in enumerators:
         if e.detect():
-            chosen = e
-    if chosen is None:
-        raise NotImplementedError('This environment is not supported.')
-    return chosen.get_monitors()
+            return e
+    raise NotImplementedError('This environment is not supported.')
+
+
+def get_monitors(enumerator=None):
+    if enumerator is None:
+        enumerator = get_enumerator()
+    return enumerator.get_monitors()
 
 
 if __name__ == '__main__':
