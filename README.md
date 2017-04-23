@@ -8,6 +8,7 @@ Fetch location and size of physical screens.
 - MS Windows
 - MS Windows: Cygwin
 - GNU/Linux: X11 (through Xinerama)
+- GNU/Linux: DRM (experimental)
 - OSX: (through PyOBJus)
 
 I don't plan on testing OSX or other environments myself. For this reason,
