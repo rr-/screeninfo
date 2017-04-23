@@ -15,7 +15,7 @@ class Monitor(object):
         self.height = height
 
     def __repr__(self):
-        return 'monitor(%dx%d+%d+%d)' % (
+        return 'monitor({}x{}+{}+{})'.format(
             self.width, self.height, self.x, self.y)
 
 
