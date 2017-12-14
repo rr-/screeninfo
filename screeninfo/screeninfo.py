@@ -362,7 +362,7 @@ def _enumerate_drm():
                 crtc = connector.encoder.crtc
                 monitors.append(
                     Monitor(crtc.x, crtc.y, crtc.width, crtc.height))
-        os.close(card_no)
+        os.close(fd)
 
     return monitors
 
