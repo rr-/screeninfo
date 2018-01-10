@@ -385,6 +385,7 @@ def _enumerate_osx():
 
     return monitors
 
+from sys import platform
 
 _ENUMERATORS = {
     'windows': _enumerate_windows,
@@ -396,13 +397,28 @@ _ENUMERATORS = {
 
 
 def _get_enumerator():
-    for enumerator in _ENUMERATORS.values():
+    """
+    Perform platform checks and choose the correct enumerator based on
+    that platform information.
+    """
+    if platform == "win32":
+        return enumerate_windows
+    elif platform == "darwin":
+        return enumerate_osx
+    elif platform == "cygwin":
+        return enumerate_cygwin
+    # ChromeOS is based on Linux. To determine which is being used,
+    # attempt to load the library associated with the enumerator.
+    for lib in ('x11', 'drm'):  # Attempt X11 first
         try:
-            enumerator()
-            return enumerator
-        except:
-            pass
-    raise NotImplementedError('This environment is not supported.')
+            load_library(lib)
+        # Does not consider library loading errors
+        except FileNotFoundError:
+            continue
+        return locals()["enumerate_" + lib]
+    # If this point in the code is reached, the platform is not one
+    # of the supported platforms.
+    raise NotImplementedError("This platform is not supported.")
 
 
 def get_monitors(name=None):
