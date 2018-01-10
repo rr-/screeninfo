@@ -38,7 +38,7 @@ def _get_enumerator():
         # Does not consider library loading errors
         except FileNotFoundError:
             continue
-        return locals()["enumerate_" + lib]
+        return globals()["enumerate_" + lib]
     # If this point in the code is reached, the platform is not one
     # of the supported platforms.
     raise NotImplementedError('This platform is not supported.')
