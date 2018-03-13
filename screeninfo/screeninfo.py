@@ -32,11 +32,9 @@ def _get_enumerator():
     elif platform == 'cygwin':
         return enumerate_cygwin
     # Linux
-    for lib in ('x11', 'drm'):
-        try:
-            load_library(lib)
-        # Does not consider library loading errors
-        except FileNotFoundError:
+    for lib in ('x11', 'drm'):  # Attempt X11 first
+        library = load_library(lib)
+        if library is None:
             continue
         return globals()["enumerate_" + lib]
     # If this point in the code is reached, the platform is not one
