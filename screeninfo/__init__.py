@@ -1,1 +1,2 @@
-from .screeninfo import Monitor, get_monitors
+from .screeninfo import get_monitors
+from .monitor import Monitor
