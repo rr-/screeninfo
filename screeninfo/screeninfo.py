@@ -2,6 +2,7 @@ import os
 
 
 class Monitor(object):
+    """Stores the resolution and position of a monitor."""
     x = 0
     y = 0
     width = 0
@@ -406,6 +407,7 @@ def _get_enumerator():
 
 
 def get_monitors(name=None):
+    """Returns a list of :class:`Monitor` objects based on active monitors."""
     enumerator = _ENUMERATORS[name] if name else _get_enumerator()
     return enumerator()
 
