@@ -3,11 +3,6 @@ import os
 
 class Monitor(object):
     """Stores the resolution and position of a monitor."""
-    x = 0
-    y = 0
-    width = 0
-    height = 0
-
     def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
