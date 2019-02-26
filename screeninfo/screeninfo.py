@@ -1,5 +1,6 @@
 import os
 
+from screeninfo.common import ScreenInfoError
 from screeninfo.enumerators import cygwin, drm, osx, windows, x11
 
 _ENUMERATORS = {
@@ -16,9 +17,9 @@ def _get_enumerator():
         try:
             enumerator()
             return enumerator
-        except:
+        except Exception:
             pass
-    raise NotImplementedError("This environment is not supported.")
+    raise ScreenInfoError("This environment is not supported.")
 
 
 def get_monitors(name=None):

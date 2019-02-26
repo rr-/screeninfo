@@ -1,4 +1,4 @@
-from screeninfo.common import Monitor
+from screeninfo.common import Monitor, ScreenInfoError
 
 
 def enumerate():
@@ -8,7 +8,7 @@ def enumerate():
     def load_library(name):
         path = ctypes.util.find_library(name)
         if not path:
-            raise ImportError("Could not load " + name)
+            raise ScreenInfoError("Could not load " + name)
         return ctypes.cdll.LoadLibrary(path)
 
     class XineramaScreenInfo(ctypes.Structure):
@@ -28,7 +28,7 @@ def enumerate():
         try:
             xinerama = load_library("Xinerama")
             if not xinerama.XineramaIsActive(d):
-                raise Exception("Xinerama is not active")
+                raise ScreenInfoError("Xinerama is not active")
 
             number = ctypes.c_int()
             xinerama.XineramaQueryScreens.restype = ctypes.POINTER(
@@ -46,4 +46,4 @@ def enumerate():
 
         return ans
     else:
-        raise Exception("Could not open display")
+        raise ScreenInfoError("Could not open display")

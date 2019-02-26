@@ -11,3 +11,7 @@ class Monitor(object):
         return "monitor({}x{}+{}+{})".format(
             self.width, self.height, self.x, self.y
         )
+
+
+class ScreenInfoError(Exception):
+    pass

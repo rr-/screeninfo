@@ -1,6 +1,6 @@
 import os
 
-from screeninfo.common import Monitor
+from screeninfo.common import Monitor, ScreenInfoError
 
 
 def enumerate():
@@ -10,7 +10,7 @@ def enumerate():
     def load_library(name):
         path = ctypes.util.find_library(name)
         if not path:
-            raise ImportError("Could not load " + name)
+            raise ScreenInfoError("Could not load " + name)
         return ctypes.cdll.LoadLibrary(path)
 
     DRM_MAX_MINOR = 16
