@@ -3,6 +3,7 @@ import os
 
 class Monitor(object):
     """Stores the resolution and position of a monitor."""
+
     def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
@@ -10,22 +11,24 @@ class Monitor(object):
         self.height = height
 
     def __repr__(self):
-        return 'monitor({}x{}+{}+{})'.format(
-            self.width, self.height, self.x, self.y)
+        return "monitor({}x{}+{}+{})".format(
+            self.width, self.height, self.x, self.y
+        )
 
 
 def _enumerate_windows():
     import ctypes
     import ctypes.wintypes
+
     monitors = []
 
     def callback(_monitor, _dc, rect, _data):
         rct = rect.contents
-        monitors.append(Monitor(
-            rct.left,
-            rct.top,
-            rct.right - rct.left,
-            rct.bottom - rct.top))
+        monitors.append(
+            Monitor(
+                rct.left, rct.top, rct.right - rct.left, rct.bottom - rct.top
+            )
+        )
         return 1
 
     MonitorEnumProc = ctypes.WINFUNCTYPE(
@@ -33,17 +36,20 @@ def _enumerate_windows():
         ctypes.c_ulong,
         ctypes.c_ulong,
         ctypes.POINTER(ctypes.wintypes.RECT),
-        ctypes.c_double)
+        ctypes.c_double,
+    )
 
     ctypes.windll.user32.EnumDisplayMonitors(
-        0, 0, MonitorEnumProc(callback), 0)
+        0, 0, MonitorEnumProc(callback), 0
+    )
 
     return monitors
 
 
 def _enumerate_cygwin():
     import ctypes
-    user32 = ctypes.cdll.LoadLibrary('user32.dll')
+
+    user32 = ctypes.cdll.LoadLibrary("user32.dll")
 
     LONG = ctypes.c_int32
     BOOL = ctypes.c_int
@@ -61,35 +67,33 @@ def _enumerate_cygwin():
 
     class RECT(ctypes.Structure):
         _fields_ = [
-            ('left', LONG),
-            ('top', LONG),
-            ('right', LONG),
-            ('bottom', LONG)
+            ("left", LONG),
+            ("top", LONG),
+            ("right", LONG),
+            ("bottom", LONG),
         ]
 
     MonitorEnumProc = ctypes.CFUNCTYPE(
-        BOOL,
-        HMONITOR,
-        HDC,
-        ctypes.POINTER(RECT),
-        LPARAM)
+        BOOL, HMONITOR, HDC, ctypes.POINTER(RECT), LPARAM
+    )
 
     user32.EnumDisplayMonitors.argtypes = [
         HANDLE,
         ctypes.POINTER(RECT),
         MonitorEnumProc,
-        LPARAM]
+        LPARAM,
+    ]
     user32.EnumDisplayMonitors.restype = ctypes.c_bool
 
     monitors = []
 
     def callback(_monitor, _dc, rect, _data):
         rct = rect.contents
-        monitors.append(Monitor(
-            rct.left,
-            rct.top,
-            rct.right - rct.left,
-            rct.bottom - rct.top))
+        monitors.append(
+            Monitor(
+                rct.left, rct.top, rct.right - rct.left, rct.bottom - rct.top
+            )
+        )
         return 1
 
     user32.EnumDisplayMonitors(None, None, MonitorEnumProc(callback), 0)
@@ -103,34 +107,36 @@ def _enumerate_x11():
     def load_library(name):
         path = ctypes.util.find_library(name)
         if not path:
-            raise ImportError('Could not load ' + name)
+            raise ImportError("Could not load " + name)
         return ctypes.cdll.LoadLibrary(path)
 
     class XineramaScreenInfo(ctypes.Structure):
         _fields_ = [
-            ('screen_number', ctypes.c_int),
-            ('x', ctypes.c_short),
-            ('y', ctypes.c_short),
-            ('width', ctypes.c_short),
-            ('height', ctypes.c_short),
+            ("screen_number", ctypes.c_int),
+            ("x", ctypes.c_short),
+            ("y", ctypes.c_short),
+            ("width", ctypes.c_short),
+            ("height", ctypes.c_short),
         ]
 
-    xlib = load_library('X11')
+    xlib = load_library("X11")
     xlib.XOpenDisplay.argtypes = [ctypes.c_char_p]
     xlib.XOpenDisplay.restype = ctypes.POINTER(ctypes.c_void_p)
-    d = xlib.XOpenDisplay(b'')
+    d = xlib.XOpenDisplay(b"")
     if d:
         try:
-            xinerama = load_library('Xinerama')
+            xinerama = load_library("Xinerama")
             if not xinerama.XineramaIsActive(d):
-                raise Exception('Xinerama is not active')
+                raise Exception("Xinerama is not active")
 
             number = ctypes.c_int()
-            xinerama.XineramaQueryScreens.restype = (
-                ctypes.POINTER(XineramaScreenInfo))
+            xinerama.XineramaQueryScreens.restype = ctypes.POINTER(
+                XineramaScreenInfo
+            )
             infos = xinerama.XineramaQueryScreens(d, ctypes.byref(number))
             infos = ctypes.cast(
-                infos, ctypes.POINTER(XineramaScreenInfo * number.value)).contents
+                infos, ctypes.POINTER(XineramaScreenInfo * number.value)
+            ).contents
 
             ans = [Monitor(i.x, i.y, i.width, i.height) for i in infos]
         finally:
@@ -139,7 +145,7 @@ def _enumerate_x11():
 
         return ans
     else:
-        raise Exception('Could not open display')
+        raise Exception("Could not open display")
 
 
 def _enumerate_drm():
@@ -149,12 +155,12 @@ def _enumerate_drm():
     def load_library(name):
         path = ctypes.util.find_library(name)
         if not path:
-            raise ImportError('Could not load ' + name)
+            raise ImportError("Could not load " + name)
         return ctypes.cdll.LoadLibrary(path)
 
     DRM_MAX_MINOR = 16
-    DRM_DIR_NAME = '/dev/dri'
-    DRM_DEV_NAME = '%s/card%d'
+    DRM_DIR_NAME = "/dev/dri"
+    DRM_DEV_NAME = "%s/card%d"
 
     class DrmBase(ctypes.Structure):
         fd = None
@@ -162,18 +168,18 @@ def _enumerate_drm():
 
     class DrmModeRes(DrmBase):
         _fields_ = [
-            ('count_fbs', ctypes.c_int),
-            ('_fbs', ctypes.POINTER(ctypes.c_uint32)),
-            ('count_crtcs', ctypes.c_int),
-            ('_crtcs', ctypes.POINTER(ctypes.c_uint32)),
-            ('count_connectors', ctypes.c_int),
-            ('_connectors', ctypes.POINTER(ctypes.c_uint32)),
-            ('count_encoders', ctypes.c_int),
-            ('_encoders', ctypes.POINTER(ctypes.c_uint32)),
-            ('min_width', ctypes.c_uint32),
-            ('max_width', ctypes.c_uint32),
-            ('min_height', ctypes.c_uint32),
-            ('max_height', ctypes.c_uint32),
+            ("count_fbs", ctypes.c_int),
+            ("_fbs", ctypes.POINTER(ctypes.c_uint32)),
+            ("count_crtcs", ctypes.c_int),
+            ("_crtcs", ctypes.POINTER(ctypes.c_uint32)),
+            ("count_connectors", ctypes.c_int),
+            ("_connectors", ctypes.POINTER(ctypes.c_uint32)),
+            ("count_encoders", ctypes.c_int),
+            ("_encoders", ctypes.POINTER(ctypes.c_uint32)),
+            ("min_width", ctypes.c_uint32),
+            ("max_width", ctypes.c_uint32),
+            ("min_height", ctypes.c_uint32),
+            ("max_height", ctypes.c_uint32),
         ]
 
         def __del__(self):
@@ -195,7 +201,8 @@ def _enumerate_drm():
             ret = []
             for i in range(self.count_connectors):
                 pconn = libdrm.drmModeGetConnector(
-                    self.fd, self._connectors[i])
+                    self.fd, self._connectors[i]
+                )
                 if not pconn:
                     continue
                 conn = pconn.contents
@@ -208,21 +215,21 @@ def _enumerate_drm():
         DRM_DISPLAY_MODE_LEN = 32
 
         _fields_ = [
-            ('clock', ctypes.c_uint32),
-            ('hdisplay', ctypes.c_uint16),
-            ('hsync_start', ctypes.c_uint16),
-            ('hsync_end', ctypes.c_uint16),
-            ('htotal', ctypes.c_uint16),
-            ('hskew', ctypes.c_uint16),
-            ('vdisplay', ctypes.c_uint16),
-            ('vsync_start', ctypes.c_uint16),
-            ('vsync_end', ctypes.c_uint16),
-            ('vtotal', ctypes.c_uint16),
-            ('vscan', ctypes.c_uint16),
-            ('vrefresh', ctypes.c_uint32),
-            ('flags', ctypes.c_uint32),
-            ('type', ctypes.c_uint32),
-            ('name', ctypes.c_char * DRM_DISPLAY_MODE_LEN),
+            ("clock", ctypes.c_uint32),
+            ("hdisplay", ctypes.c_uint16),
+            ("hsync_start", ctypes.c_uint16),
+            ("hsync_end", ctypes.c_uint16),
+            ("htotal", ctypes.c_uint16),
+            ("hskew", ctypes.c_uint16),
+            ("vdisplay", ctypes.c_uint16),
+            ("vsync_start", ctypes.c_uint16),
+            ("vsync_end", ctypes.c_uint16),
+            ("vtotal", ctypes.c_uint16),
+            ("vscan", ctypes.c_uint16),
+            ("vrefresh", ctypes.c_uint32),
+            ("flags", ctypes.c_uint32),
+            ("type", ctypes.c_uint32),
+            ("name", ctypes.c_char * DRM_DISPLAY_MODE_LEN),
         ]
 
         def __del__(self):
@@ -260,21 +267,21 @@ def _enumerate_drm():
         DRM_MODE_CONNECTOR_DSI = 16
 
         _fields_ = [
-            ('connector_id', ctypes.c_uint32),
-            ('encoder_id', ctypes.c_uint32),
-            ('connector_type', ctypes.c_uint32),
-            ('connector_type_id', ctypes.c_uint32),
-            ('connection', ctypes.c_uint),
-            ('mmWidth', ctypes.c_uint32),
-            ('mmHeight', ctypes.c_uint32),
-            ('subpixel', ctypes.c_uint),
-            ('count_modes', ctypes.c_int),
-            ('modes', ctypes.POINTER(DrmModeModeInfo)),
-            ('count_props', ctypes.c_int),
-            ('props', ctypes.POINTER(ctypes.c_uint32)),
-            ('prop_values', ctypes.POINTER(ctypes.c_uint64)),
-            ('count_encoders', ctypes.c_int),
-            ('encoders', ctypes.POINTER(ctypes.c_uint32)),
+            ("connector_id", ctypes.c_uint32),
+            ("encoder_id", ctypes.c_uint32),
+            ("connector_type", ctypes.c_uint32),
+            ("connector_type_id", ctypes.c_uint32),
+            ("connection", ctypes.c_uint),
+            ("mmWidth", ctypes.c_uint32),
+            ("mmHeight", ctypes.c_uint32),
+            ("subpixel", ctypes.c_uint),
+            ("count_modes", ctypes.c_int),
+            ("modes", ctypes.POINTER(DrmModeModeInfo)),
+            ("count_props", ctypes.c_int),
+            ("props", ctypes.POINTER(ctypes.c_uint32)),
+            ("prop_values", ctypes.POINTER(ctypes.c_uint64)),
+            ("count_encoders", ctypes.c_int),
+            ("encoders", ctypes.POINTER(ctypes.c_uint32)),
         ]
 
         def __del__(self):
@@ -294,11 +301,11 @@ def _enumerate_drm():
 
     class DrmModeEncoder(DrmBase):
         _fields_ = [
-            ('encoder_id', ctypes.c_uint32),
-            ('encoder_type', ctypes.c_uint32),
-            ('crtc_id', ctypes.c_uint32),
-            ('possible_crtcs', ctypes.c_uint32),
-            ('possible_clones', ctypes.c_uint32),
+            ("encoder_id", ctypes.c_uint32),
+            ("encoder_type", ctypes.c_uint32),
+            ("crtc_id", ctypes.c_uint32),
+            ("possible_crtcs", ctypes.c_uint32),
+            ("possible_clones", ctypes.c_uint32),
         ]
 
         def __del__(self):
@@ -314,20 +321,22 @@ def _enumerate_drm():
 
     class DrmModeCrtc(DrmBase):
         _fields_ = [
-            ('crtc_id', ctypes.c_uint32),
-            ('buffer_id', ctypes.c_uint32),
-            ('x', ctypes.c_uint32), ('y', ctypes.c_uint32),
-            ('width', ctypes.c_uint32), ('height', ctypes.c_uint32),
-            ('mode_valid', ctypes.c_int),
-            ('mode', DrmModeModeInfo),
-            ('gamma_size', ctypes.c_int),
+            ("crtc_id", ctypes.c_uint32),
+            ("buffer_id", ctypes.c_uint32),
+            ("x", ctypes.c_uint32),
+            ("y", ctypes.c_uint32),
+            ("width", ctypes.c_uint32),
+            ("height", ctypes.c_uint32),
+            ("mode_valid", ctypes.c_int),
+            ("mode", DrmModeModeInfo),
+            ("gamma_size", ctypes.c_int),
         ]
 
         def __del__(self):
             if self.need_free:
                 libdrm.drmModeFreeCrtc(ctypes.byref(self))
 
-    libdrm = load_library('drm')
+    libdrm = load_library("drm")
     libdrm.drmModeGetResources.argtypes = [ctypes.c_int]
     libdrm.drmModeGetResources.restype = ctypes.POINTER(DrmModeRes)
     libdrm.drmModeFreeResources.argtypes = [ctypes.POINTER(DrmModeRes)]
@@ -363,7 +372,8 @@ def _enumerate_drm():
             if connector.connection == DrmModeConnector.DRM_MODE_CONNECTED:
                 crtc = connector.encoder.crtc
                 monitors.append(
-                    Monitor(crtc.x, crtc.y, crtc.width, crtc.height))
+                    Monitor(crtc.x, crtc.y, crtc.width, crtc.height)
+                )
         os.close(fd)
 
     return monitors
@@ -372,9 +382,10 @@ def _enumerate_drm():
 def _enumerate_osx():
     from pyobjus import autoclass
     from pyobjus.dylib_manager import load_framework, INCLUDE
+
     load_framework(INCLUDE.AppKit)
 
-    screens = autoclass('NSScreen').screens()
+    screens = autoclass("NSScreen").screens()
     monitors = []
 
     for i in range(screens.count()):
@@ -383,17 +394,18 @@ def _enumerate_osx():
             f = f()
 
         monitors.append(
-            Monitor(f.origin.x, f.origin.y, f.size.width, f.size.height))
+            Monitor(f.origin.x, f.origin.y, f.size.width, f.size.height)
+        )
 
     return monitors
 
 
 _ENUMERATORS = {
-    'windows': _enumerate_windows,
-    'cygwin': _enumerate_cygwin,
-    'x11': _enumerate_x11,
-    'drm': _enumerate_drm,
-    'osx': _enumerate_osx,
+    "windows": _enumerate_windows,
+    "cygwin": _enumerate_cygwin,
+    "x11": _enumerate_x11,
+    "drm": _enumerate_drm,
+    "osx": _enumerate_osx,
 }
 
 
@@ -404,7 +416,7 @@ def _get_enumerator():
             return enumerator
         except:
             pass
-    raise NotImplementedError('This environment is not supported.')
+    raise NotImplementedError("This environment is not supported.")
 
 
 def get_monitors(name=None):
@@ -413,6 +425,6 @@ def get_monitors(name=None):
     return enumerator()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     for m in get_monitors():
         print(str(m))
