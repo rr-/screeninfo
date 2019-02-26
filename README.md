@@ -46,8 +46,8 @@ driver directly. You can do so by passing extra parameter to `get_monitors()`
 like this:
 
 ```python
-from screeninfo import get_monitors
-for m in get_monitors('osx'):
+from screeninfo import get_monitors, Enumerator
+for m in get_monitors(Enumerator.OSX):
     print(str(m))
 ```
 
