@@ -25,8 +25,3 @@ def get_monitors(name=None):
     """Returns a list of :class:`Monitor` objects based on active monitors."""
     enumerator = _ENUMERATORS[name] if name else _get_enumerator()
     return enumerator()
-
-
-if __name__ == "__main__":
-    for m in get_monitors():
-        print(str(m))
