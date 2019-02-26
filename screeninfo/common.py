@@ -12,8 +12,11 @@ class Monitor:
     height: int
 
     def __repr__(self) -> str:
-        return "monitor({}x{}+{}+{})".format(
-            self.width, self.height, self.x, self.y
+        return (
+            f"Monitor("
+            f"x={self.x}, y={self.y}, "
+            f"width={self.width}, height={self.height}"
+            f")"
         )
 
 
