@@ -1,25 +1,27 @@
+import ctypes
+import ctypes.util
+
 from screeninfo.common import Monitor, ScreenInfoError
 
 
+def load_library(name):
+    path = ctypes.util.find_library(name)
+    if not path:
+        raise ScreenInfoError("Could not load " + name)
+    return ctypes.cdll.LoadLibrary(path)
+
+
+class XineramaScreenInfo(ctypes.Structure):
+    _fields_ = [
+        ("screen_number", ctypes.c_int),
+        ("x", ctypes.c_short),
+        ("y", ctypes.c_short),
+        ("width", ctypes.c_short),
+        ("height", ctypes.c_short),
+    ]
+
+
 def enumerate():
-    import ctypes
-    import ctypes.util
-
-    def load_library(name):
-        path = ctypes.util.find_library(name)
-        if not path:
-            raise ScreenInfoError("Could not load " + name)
-        return ctypes.cdll.LoadLibrary(path)
-
-    class XineramaScreenInfo(ctypes.Structure):
-        _fields_ = [
-            ("screen_number", ctypes.c_int),
-            ("x", ctypes.c_short),
-            ("y", ctypes.c_short),
-            ("width", ctypes.c_short),
-            ("height", ctypes.c_short),
-        ]
-
     xlib = load_library("X11")
     xlib.XOpenDisplay.argtypes = [ctypes.c_char_p]
     xlib.XOpenDisplay.restype = ctypes.POINTER(ctypes.c_void_p)

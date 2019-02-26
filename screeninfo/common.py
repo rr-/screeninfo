@@ -1,3 +1,6 @@
+import enum
+
+
 class Monitor(object):
     """Stores the resolution and position of a monitor."""
 
@@ -15,3 +18,11 @@ class Monitor(object):
 
 class ScreenInfoError(Exception):
     pass
+
+
+class Enumerator(enum.Enum):
+    Windows = "windows"
+    Cygwin = "cygwin"
+    X11 = "x11"
+    DRM = "drm"
+    OSX = "osx"

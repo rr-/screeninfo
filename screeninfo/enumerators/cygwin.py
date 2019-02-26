@@ -1,16 +1,25 @@
+import ctypes
+
 from screeninfo.common import Monitor
+
+LONG = ctypes.c_int32
+BOOL = ctypes.c_int
+HANDLE = ctypes.c_void_p
+HMONITOR = HANDLE
+HDC = HANDLE
+
+
+class RECT(ctypes.Structure):
+    _fields_ = [
+        ("left", LONG),
+        ("top", LONG),
+        ("right", LONG),
+        ("bottom", LONG),
+    ]
 
 
 def enumerate():
-    import ctypes
-
     user32 = ctypes.cdll.LoadLibrary("user32.dll")
-
-    LONG = ctypes.c_int32
-    BOOL = ctypes.c_int
-    HANDLE = ctypes.c_void_p
-    HMONITOR = HANDLE
-    HDC = HANDLE
 
     ptr_size = ctypes.sizeof(ctypes.c_void_p)
     if ptr_size == ctypes.sizeof(ctypes.c_long):
@@ -19,14 +28,6 @@ def enumerate():
     elif ptr_size == ctypes.sizeof(ctypes.c_longlong):
         WPARAM = ctypes.c_ulonglong
         LPARAM = ctypes.c_longlong
-
-    class RECT(ctypes.Structure):
-        _fields_ = [
-            ("left", LONG),
-            ("top", LONG),
-            ("right", LONG),
-            ("bottom", LONG),
-        ]
 
     MonitorEnumProc = ctypes.CFUNCTYPE(
         BOOL, HMONITOR, HDC, ctypes.POINTER(RECT), LPARAM

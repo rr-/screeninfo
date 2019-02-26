@@ -1,10 +1,10 @@
+import ctypes
+import ctypes.wintypes
+
 from screeninfo.common import Monitor
 
 
 def enumerate():
-    import ctypes
-    import ctypes.wintypes
-
     monitors = []
 
     def callback(_monitor, _dc, rect, _data):
