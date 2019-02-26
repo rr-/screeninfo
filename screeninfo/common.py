@@ -1,7 +1,7 @@
 import enum
 
 
-class Monitor(object):
+class Monitor:
     """Stores the resolution and position of a monitor."""
 
     def __init__(self, x, y, width, height):

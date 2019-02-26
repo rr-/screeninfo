@@ -28,4 +28,4 @@ def enumerate_monitors():
         0, 0, MonitorEnumProc(callback), 0
     )
 
-    return monitors
+    yield from monitors

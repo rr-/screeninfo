@@ -150,8 +150,7 @@ class DrmModeConnector(DrmBase):
             encoder.fd = self.fd
             encoder.need_free = True
             return encoder
-        else:
-            return None
+        return None
 
 
 class DrmModeEncoder(DrmBase):
@@ -216,8 +215,6 @@ def enumerate_monitors():
     DRM_DIR_NAME = "/dev/dri"
     DRM_DEV_NAME = "%s/card%d"
 
-    monitors = []
-
     for card_no in range(DRM_MAX_MINOR):
         card_path = DRM_DEV_NAME % (DRM_DIR_NAME, card_no)
         try:
@@ -237,9 +234,5 @@ def enumerate_monitors():
         for connector in res.connectors:
             if connector.connection == DrmModeConnector.DRM_MODE_CONNECTED:
                 crtc = connector.encoder.crtc
-                monitors.append(
-                    Monitor(crtc.x, crtc.y, crtc.width, crtc.height)
-                )
+                yield Monitor(crtc.x, crtc.y, crtc.width, crtc.height)
         os.close(fd)
-
-    return monitors

@@ -25,27 +25,26 @@ def enumerate_monitors():
     xlib = load_library("X11")
     xlib.XOpenDisplay.argtypes = [ctypes.c_char_p]
     xlib.XOpenDisplay.restype = ctypes.POINTER(ctypes.c_void_p)
-    d = xlib.XOpenDisplay(b"")
-    if d:
-        try:
-            xinerama = load_library("Xinerama")
-            if not xinerama.XineramaIsActive(d):
-                raise ScreenInfoError("Xinerama is not active")
-
-            number = ctypes.c_int()
-            xinerama.XineramaQueryScreens.restype = ctypes.POINTER(
-                XineramaScreenInfo
-            )
-            infos = xinerama.XineramaQueryScreens(d, ctypes.byref(number))
-            infos = ctypes.cast(
-                infos, ctypes.POINTER(XineramaScreenInfo * number.value)
-            ).contents
-
-            ans = [Monitor(i.x, i.y, i.width, i.height) for i in infos]
-        finally:
-            xlib.XCloseDisplay.restype = ctypes.POINTER(ctypes.c_void_p)
-            xlib.XCloseDisplay(d)
-
-        return ans
-    else:
+    display = xlib.XOpenDisplay(b"")
+    if not display:
         raise ScreenInfoError("Could not open display")
+
+    try:
+        xinerama = load_library("Xinerama")
+        if not xinerama.XineramaIsActive(display):
+            raise ScreenInfoError("Xinerama is not active")
+
+        number = ctypes.c_int()
+        xinerama.XineramaQueryScreens.restype = ctypes.POINTER(
+            XineramaScreenInfo
+        )
+        infos = xinerama.XineramaQueryScreens(display, ctypes.byref(number))
+        infos = ctypes.cast(
+            infos, ctypes.POINTER(XineramaScreenInfo * number.value)
+        ).contents
+
+        for info in infos:
+            yield Monitor(info.x, info.y, info.width, info.height)
+    finally:
+        xlib.XCloseDisplay.restype = ctypes.POINTER(ctypes.c_void_p)
+        xlib.XCloseDisplay(display)

@@ -53,4 +53,5 @@ def enumerate_monitors():
         return 1
 
     user32.EnumDisplayMonitors(None, None, MonitorEnumProc(callback), 0)
-    return monitors
+
+    yield from monitors

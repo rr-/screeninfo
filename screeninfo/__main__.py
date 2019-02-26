@@ -15,8 +15,8 @@ def parse_args():
 
 def main():
     args = parse_args()
-    for m in get_monitors(args.enumerator):
-        print(str(m))
+    for monitor in get_monitors(args.enumerator):
+        print(str(monitor))
 
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ _ENUMERATORS = {
 
 def _get_monitors(enumerator_module_path):
     module = importlib.import_module(enumerator_module_path)
-    return module.enumerate_monitors()
+    return list(module.enumerate_monitors())
 
 
 def get_monitors(name=None):
