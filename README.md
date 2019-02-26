@@ -36,8 +36,8 @@ for m in get_monitors():
 
 **Output**:
 
->Monitor(x=1920, y=0, width=1920, height=1080)  
->Monitor(x=0, y=0, width=1920, height=1080)
+>Monitor(x=1920, y=0, width=1920, height=1080, name=None)  
+>Monitor(x=0, y=0, width=1920, height=1080, name=None)
 
 ### Forcing environment
 

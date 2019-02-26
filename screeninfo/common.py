@@ -1,4 +1,5 @@
 import enum
+import typing as T
 from dataclasses import dataclass
 
 
@@ -10,12 +11,14 @@ class Monitor:
     y: int
     width: int
     height: int
+    name: T.Optional[str] = None
 
     def __repr__(self) -> str:
         return (
             f"Monitor("
             f"x={self.x}, y={self.y}, "
-            f"width={self.width}, height={self.height}"
+            f"width={self.width}, height={self.height}, "
+            f"name={self.name!r}"
             f")"
         )
 
