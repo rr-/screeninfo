@@ -4,7 +4,7 @@ import ctypes.wintypes
 from screeninfo.common import Monitor
 
 
-def enumerate():
+def enumerate_monitors():
     monitors = []
 
     def callback(_monitor, _dc, rect, _data):

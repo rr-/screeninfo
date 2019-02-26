@@ -18,7 +18,7 @@ class RECT(ctypes.Structure):
     ]
 
 
-def enumerate():
+def enumerate_monitors():
     user32 = ctypes.cdll.LoadLibrary("user32.dll")
 
     ptr_size = ctypes.sizeof(ctypes.c_void_p)

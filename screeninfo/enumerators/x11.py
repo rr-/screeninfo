@@ -21,7 +21,7 @@ class XineramaScreenInfo(ctypes.Structure):
     ]
 
 
-def enumerate():
+def enumerate_monitors():
     xlib = load_library("X11")
     xlib.XOpenDisplay.argtypes = [ctypes.c_char_p]
     xlib.XOpenDisplay.restype = ctypes.POINTER(ctypes.c_void_p)

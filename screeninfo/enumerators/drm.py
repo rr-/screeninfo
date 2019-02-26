@@ -211,7 +211,7 @@ libdrm.drmModeFreeCrtc.argtypes = [ctypes.POINTER(DrmModeCrtc)]
 libdrm.drmModeFreeCrtc.restype = None
 
 
-def enumerate():
+def enumerate_monitors():
     DRM_MAX_MINOR = 16
     DRM_DIR_NAME = "/dev/dri"
     DRM_DEV_NAME = "%s/card%d"

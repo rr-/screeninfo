@@ -3,7 +3,7 @@ from pyobjus.dylib_manager import INCLUDE, load_framework
 from screeninfo.common import Monitor
 
 
-def enumerate():
+def enumerate_monitors():
     load_framework(INCLUDE.AppKit)
 
     screens = autoclass("NSScreen").screens()
