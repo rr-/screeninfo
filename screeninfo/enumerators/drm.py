@@ -227,7 +227,11 @@ def enumerate():
         if fd < 0:
             continue
 
-        res = libdrm.drmModeGetResources(fd).contents
+        res = libdrm.drmModeGetResources(fd)
+        if not res:
+            raise ScreenInfoError("Failed to get drm resources")
+
+        res = res.contents
         res.fd = fd
         res.needs_free = True
         for connector in res.connectors:
