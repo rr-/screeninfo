@@ -225,18 +225,24 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
         if fd < 0:
             continue
 
-        res = libdrm.drmModeGetResources(fd)
-        if not res:
-            raise ScreenInfoError("Failed to get drm resources")
+        try:
+            res = libdrm.drmModeGetResources(fd)
+            if not res:
+                raise ScreenInfoError("Failed to get drm resources")
 
-        res = res.contents
-        res.fd = fd
-        res.needs_free = True
-        for connector in res.connectors:
-            if connector.connection == DrmModeConnector.DRM_MODE_CONNECTED:
-                crtc = connector.encoder.crtc
-                yield Monitor(
-                    x=crtc.x, y=crtc.y, width=crtc.width, height=crtc.height
-                )
+            res = res.contents
+            res.fd = fd
+            res.needs_free = True
 
-        os.close(fd)
+            for connector in res.connectors:
+                if connector.connection != DrmModeConnector.DRM_MODE_CONNECTED:
+                    crtc = connector.encoder.crtc
+                    yield Monitor(
+                        x=crtc.x,
+                        y=crtc.y,
+                        width=crtc.width,
+                        height=crtc.height,
+                    )
+
+        finally:
+            os.close(fd)

@@ -48,6 +48,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
             yield Monitor(
                 x=info.x, y=info.y, width=info.width, height=info.height
             )
+
     finally:
         xlib.XCloseDisplay.restype = ctypes.POINTER(ctypes.c_void_p)
         xlib.XCloseDisplay(display)
