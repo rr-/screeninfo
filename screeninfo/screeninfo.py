@@ -6,6 +6,7 @@ from screeninfo.common import Enumerator, Monitor, ScreenInfoError
 _ENUMERATOR_TO_MODULE_PATH = {
     Enumerator.Windows: "screeninfo.enumerators.windows",
     Enumerator.Cygwin: "screeninfo.enumerators.cygwin",
+    Enumerator.Xrandr: "screeninfo.enumerators.xrandr",
     Enumerator.Xinerama: "screeninfo.enumerators.xinerama",
     Enumerator.DRM: "screeninfo.enumerators.drm",
     Enumerator.OSX: "screeninfo.enumerators.osx",
