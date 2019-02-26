@@ -26,12 +26,14 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
     xlib = load_library("X11")
     xlib.XOpenDisplay.argtypes = [ctypes.c_char_p]
     xlib.XOpenDisplay.restype = ctypes.POINTER(ctypes.c_void_p)
+
+    xinerama = load_library("Xinerama")
+
     display = xlib.XOpenDisplay(b"")
     if not display:
         raise ScreenInfoError("Could not open display")
 
     try:
-        xinerama = load_library("Xinerama")
         if not xinerama.XineramaIsActive(display):
             raise ScreenInfoError("Xinerama is not active")
 

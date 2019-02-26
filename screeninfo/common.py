@@ -30,6 +30,6 @@ class ScreenInfoError(Exception):
 class Enumerator(enum.Enum):
     Windows = "windows"
     Cygwin = "cygwin"
-    X11 = "x11"
+    Xinerama = "xinerama"
     DRM = "drm"
     OSX = "osx"
