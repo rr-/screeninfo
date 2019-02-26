@@ -1,4 +1,5 @@
 import ctypes
+import typing as T
 
 from screeninfo.common import Monitor
 
@@ -18,7 +19,7 @@ class RECT(ctypes.Structure):
     ]
 
 
-def enumerate_monitors():
+def enumerate_monitors() -> T.Iterable[Monitor]:
     user32 = ctypes.cdll.LoadLibrary("user32.dll")
 
     ptr_size = ctypes.sizeof(ctypes.c_void_p)
@@ -43,11 +44,14 @@ def enumerate_monitors():
 
     monitors = []
 
-    def callback(_monitor, _dc, rect, _data):
+    def callback(monitor: T.Any, dc: T.Any, rect: T.Any, data: T.Any) -> int:
         rct = rect.contents
         monitors.append(
             Monitor(
-                rct.left, rct.top, rct.right - rct.left, rct.bottom - rct.top
+                x=rct.left,
+                y=rct.top,
+                width=rct.right - rct.left,
+                height=rct.bottom - rct.top,
             )
         )
         return 1

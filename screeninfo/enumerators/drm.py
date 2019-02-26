@@ -1,11 +1,12 @@
 import ctypes
 import ctypes.util
 import os
+import typing as T
 
 from screeninfo.common import Monitor, ScreenInfoError
 
 
-def load_library(name):
+def load_library(name: str) -> T.Any:
     path = ctypes.util.find_library(name)
     if not path:
         raise ScreenInfoError("Could not load " + name)
@@ -36,12 +37,12 @@ class DrmModeRes(DrmBase):
         ("max_height", ctypes.c_uint32),
     ]
 
-    def __del__(self):
+    def __del__(self) -> None:
         if self.needs_free:
             libdrm.drmModeFreeResources(ctypes.byref(self))
 
     @property
-    def crtcs(self):
+    def crtcs(self) -> T.List["DrmModeCrtc"]:
         ret = []
         for i in range(self.count_crtcs):
             crtc = libdrm.drmModeGetCrtc(self.fd, self._crtcs[i]).contents
@@ -51,7 +52,7 @@ class DrmModeRes(DrmBase):
         return ret
 
     @property
-    def connectors(self):
+    def connectors(self) -> T.List["DrmModeConnector"]:
         ret = []
         for i in range(self.count_connectors):
             pconn = libdrm.drmModeGetConnector(self.fd, self._connectors[i])
@@ -85,7 +86,7 @@ class DrmModeModeInfo(DrmBase):
         ("name", ctypes.c_char * DRM_DISPLAY_MODE_LEN),
     ]
 
-    def __del__(self):
+    def __del__(self) -> None:
         if self.needs_free:
             libdrm.drmModeFreeModeInfo(ctypes.byref(self))
 
@@ -138,18 +139,18 @@ class DrmModeConnector(DrmBase):
         ("encoders", ctypes.POINTER(ctypes.c_uint32)),
     ]
 
-    def __del__(self):
+    def __del__(self) -> None:
         if self.needs_free:
             libdrm.drmModeFreeConnector(ctypes.byref(self))
 
     @property
-    def encoder(self):
+    def encoder(self) -> T.Optional["DrmModeEncoder"]:
         encoder_ptr = libdrm.drmModeGetEncoder(self.fd, self.encoder_id)
         if encoder_ptr:
             encoder = encoder_ptr.contents
             encoder.fd = self.fd
             encoder.need_free = True
-            return encoder
+            return T.cast("DrmModeEncoder", encoder)
         return None
 
 
@@ -162,16 +163,16 @@ class DrmModeEncoder(DrmBase):
         ("possible_clones", ctypes.c_uint32),
     ]
 
-    def __del__(self):
+    def __del__(self) -> None:
         if self.need_free:
             libdrm.drmModeFreeEncoder(ctypes.byref(self))
 
     @property
-    def crtc(self):
+    def crtc(self) -> "DrmModeCrtc":
         crtc = libdrm.drmModeGetCrtc(self.fd, self.crtc_id).contents
         crtc.fd = self.fd
         crtc.need_free = True
-        return crtc
+        return T.cast("DrmModeCrtc", crtc)
 
 
 class DrmModeCrtc(DrmBase):
@@ -187,7 +188,7 @@ class DrmModeCrtc(DrmBase):
         ("gamma_size", ctypes.c_int),
     ]
 
-    def __del__(self):
+    def __del__(self) -> None:
         if self.need_free:
             libdrm.drmModeFreeCrtc(ctypes.byref(self))
 
@@ -210,7 +211,7 @@ libdrm.drmModeFreeCrtc.argtypes = [ctypes.POINTER(DrmModeCrtc)]
 libdrm.drmModeFreeCrtc.restype = None
 
 
-def enumerate_monitors():
+def enumerate_monitors() -> T.Iterable[Monitor]:
     DRM_MAX_MINOR = 16
     DRM_DIR_NAME = "/dev/dri"
     DRM_DEV_NAME = "%s/card%d"
@@ -234,5 +235,8 @@ def enumerate_monitors():
         for connector in res.connectors:
             if connector.connection == DrmModeConnector.DRM_MODE_CONNECTED:
                 crtc = connector.encoder.crtc
-                yield Monitor(crtc.x, crtc.y, crtc.width, crtc.height)
+                yield Monitor(
+                    x=crtc.x, y=crtc.y, width=crtc.width, height=crtc.height
+                )
+
         os.close(fd)

@@ -1,17 +1,21 @@
 import ctypes
 import ctypes.wintypes
+import typing as T
 
 from screeninfo.common import Monitor
 
 
-def enumerate_monitors():
+def enumerate_monitors() -> T.Iterable[Monitor]:
     monitors = []
 
-    def callback(_monitor, _dc, rect, _data):
+    def callback(monitor: T.Any, dc: T.Any, rect: T.Any, data: T.Any) -> int:
         rct = rect.contents
         monitors.append(
             Monitor(
-                rct.left, rct.top, rct.right - rct.left, rct.bottom - rct.top
+                x=rct.left,
+                y=rct.top,
+                width=rct.right - rct.left,
+                height=rct.bottom - rct.top,
             )
         )
         return 1

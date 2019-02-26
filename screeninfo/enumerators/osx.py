@@ -1,9 +1,11 @@
+import typing as T
+
 from pyobjus import autoclass
 from pyobjus.dylib_manager import INCLUDE, load_framework
 from screeninfo.common import Monitor
 
 
-def enumerate_monitors():
+def enumerate_monitors() -> T.Iterable[Monitor]:
     load_framework(INCLUDE.AppKit)
 
     screens = autoclass("NSScreen").screens()
@@ -13,4 +15,9 @@ def enumerate_monitors():
         if callable(f):
             f = f()
 
-        yield Monitor(f.origin.x, f.origin.y, f.size.width, f.size.height)
+        yield Monitor(
+            x=f.origin.x,
+            y=f.origin.y,
+            width=f.size.width,
+            height=f.size.height,
+        )

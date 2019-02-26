@@ -1,10 +1,11 @@
 import ctypes
 import ctypes.util
+import typing as T
 
 from screeninfo.common import Monitor, ScreenInfoError
 
 
-def load_library(name):
+def load_library(name: str) -> T.Any:
     path = ctypes.util.find_library(name)
     if not path:
         raise ScreenInfoError("Could not load " + name)
@@ -21,7 +22,7 @@ class XineramaScreenInfo(ctypes.Structure):
     ]
 
 
-def enumerate_monitors():
+def enumerate_monitors() -> T.Iterable[Monitor]:
     xlib = load_library("X11")
     xlib.XOpenDisplay.argtypes = [ctypes.c_char_p]
     xlib.XOpenDisplay.restype = ctypes.POINTER(ctypes.c_void_p)
@@ -44,7 +45,9 @@ def enumerate_monitors():
         ).contents
 
         for info in infos:
-            yield Monitor(info.x, info.y, info.width, info.height)
+            yield Monitor(
+                x=info.x, y=info.y, width=info.width, height=info.height
+            )
     finally:
         xlib.XCloseDisplay.restype = ctypes.POINTER(ctypes.c_void_p)
         xlib.XCloseDisplay(display)
