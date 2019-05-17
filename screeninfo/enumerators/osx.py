@@ -16,8 +16,8 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
             f = f()
 
         yield Monitor(
-            x=f.origin.x,
-            y=f.origin.y,
-            width=f.size.width,
-            height=f.size.height,
+            x=int(f.origin.x),
+            y=int(f.origin.y),
+            width=int(f.size.width),
+            height=int(f.size.height),
         )
