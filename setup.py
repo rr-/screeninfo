@@ -10,4 +10,5 @@ setup(
     url="https://github.com/rr-/screeninfo",
     keywords=["screen", "monitor", "desktop"],
     classifiers=[],
+    install_requires=["dataclasses"],
 )
