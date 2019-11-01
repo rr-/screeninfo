@@ -90,6 +90,9 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
             if output_info.contents.connection != RR_Connected:
                 continue
 
+            if not output_info.contents.crtc:
+                continue
+
             try:
                 crtc_info = xrandr.XRRGetCrtcInfo(
                     display,
