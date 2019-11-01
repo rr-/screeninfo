@@ -1,25 +1,25 @@
-import ctypes
 import typing as T
 
 from screeninfo.common import Monitor
 
-LONG = ctypes.c_int32
-BOOL = ctypes.c_int
-HANDLE = ctypes.c_void_p
-HMONITOR = HANDLE
-HDC = HANDLE
-
-
-class RECT(ctypes.Structure):
-    _fields_ = [
-        ("left", LONG),
-        ("top", LONG),
-        ("right", LONG),
-        ("bottom", LONG),
-    ]
-
 
 def enumerate_monitors() -> T.Iterable[Monitor]:
+    import ctypes
+
+    LONG = ctypes.c_int32
+    BOOL = ctypes.c_int
+    HANDLE = ctypes.c_void_p
+    HMONITOR = HANDLE
+    HDC = HANDLE
+
+    class RECT(ctypes.Structure):
+        _fields_ = [
+            ("left", LONG),
+            ("top", LONG),
+            ("right", LONG),
+            ("bottom", LONG),
+        ]
+
     user32 = ctypes.cdll.LoadLibrary("user32.dll")
 
     ptr_size = ctypes.sizeof(ctypes.c_void_p)

@@ -1,31 +1,31 @@
-import ctypes
-import ctypes.wintypes
 import typing as T
 
 from screeninfo.common import Monitor
 
-CCHDEVICENAME = 32
-
-MonitorEnumProc = ctypes.WINFUNCTYPE(
-    ctypes.c_int,
-    ctypes.c_ulong,
-    ctypes.c_ulong,
-    ctypes.POINTER(ctypes.wintypes.RECT),
-    ctypes.c_double,
-)
-
-
-class MONITORINFOEXW(ctypes.Structure):
-    _fields_ = [
-        ("cbSize", ctypes.wintypes.DWORD),
-        ("rcMonitor", ctypes.wintypes.RECT),
-        ("rcWork", ctypes.wintypes.RECT),
-        ("dwFlags", ctypes.wintypes.DWORD),
-        ("szDevice", ctypes.wintypes.WCHAR * CCHDEVICENAME),
-    ]
-
 
 def enumerate_monitors() -> T.Iterable[Monitor]:
+    import ctypes
+    import ctypes.wintypes
+
+    CCHDEVICENAME = 32
+
+    MonitorEnumProc = ctypes.WINFUNCTYPE(
+        ctypes.c_int,
+        ctypes.c_ulong,
+        ctypes.c_ulong,
+        ctypes.POINTER(ctypes.wintypes.RECT),
+        ctypes.c_double,
+    )
+
+    class MONITORINFOEXW(ctypes.Structure):
+        _fields_ = [
+            ("cbSize", ctypes.wintypes.DWORD),
+            ("rcMonitor", ctypes.wintypes.RECT),
+            ("rcWork", ctypes.wintypes.RECT),
+            ("dwFlags", ctypes.wintypes.DWORD),
+            ("szDevice", ctypes.wintypes.WCHAR * CCHDEVICENAME),
+        ]
+
     monitors = []
 
     def callback(monitor: T.Any, dc: T.Any, rect: T.Any, data: T.Any) -> int:

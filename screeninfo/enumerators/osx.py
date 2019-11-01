@@ -1,11 +1,12 @@
 import typing as T
 
-from pyobjus import autoclass
-from pyobjus.dylib_manager import INCLUDE, load_framework
 from screeninfo.common import Monitor
 
 
 def enumerate_monitors() -> T.Iterable[Monitor]:
+    from pyobjus import autoclass
+    from pyobjus.dylib_manager import INCLUDE, load_framework
+
     load_framework(INCLUDE.AppKit)
 
     screens = autoclass("NSScreen").screens()
