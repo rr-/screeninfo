@@ -67,6 +67,6 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
     # We want monitor specific DCs in the callback.
     ctypes.windll.user32.EnumDisplayMonitors(
         dc_full, None, MonitorEnumProc(callback), 0
-        )
+    )
 
     yield from monitors
