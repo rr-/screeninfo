@@ -104,6 +104,8 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
                         y=crtc_info.contents.y,
                         width=crtc_info.contents.width,
                         height=crtc_info.contents.height,
+                        width_mm=output_info.contents.mm_width,
+                        height_mm=output_info.contents.mm_height,
                         name=output_info.contents.name.decode(
                             sys.getfilesystemencoding()
                         ),
