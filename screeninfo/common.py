@@ -11,6 +11,8 @@ class Monitor:
     y: int
     width: int
     height: int
+    width_mm: T.Optional[int] = 0
+    height_mm: T.Optional[int] = 0
     name: T.Optional[str] = None
 
     def __repr__(self) -> str:
@@ -18,6 +20,7 @@ class Monitor:
             f"Monitor("
             f"x={self.x}, y={self.y}, "
             f"width={self.width}, height={self.height}, "
+            f"width_mm={self.width_mm}, height_mm={self.height_mm}, "
             f"name={self.name!r}"
             f")"
         )
