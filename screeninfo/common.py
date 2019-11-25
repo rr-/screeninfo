@@ -11,8 +11,8 @@ class Monitor:
     y: int
     width: int
     height: int
-    width_mm: T.Optional[int] = 0
-    height_mm: T.Optional[int] = 0
+    width_mm: T.Optional[int] = None
+    height_mm: T.Optional[int] = None
     name: T.Optional[str] = None
 
     def __repr__(self) -> str:
