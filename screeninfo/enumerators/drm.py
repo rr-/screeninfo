@@ -231,6 +231,8 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
                         y=crtc.y,
                         width=crtc.width,
                         height=crtc.height,
+                        width_mm=connector.mmWidth,
+                        height_mm=connector.mmHeight,
                     )
 
         finally:
