@@ -224,7 +224,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
             res.needs_free = True
 
             for connector in res.connectors:
-                if connector.connection != DrmModeConnector.DRM_MODE_CONNECTED:
+                if connector.connection == DrmModeConnector.DRM_MODE_CONNECTED:
                     crtc = connector.encoder.crtc
                     yield Monitor(
                         x=crtc.x,
