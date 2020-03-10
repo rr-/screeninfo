@@ -20,6 +20,8 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
     xlib = load_library("X11")
     xlib.XOpenDisplay.argtypes = [ctypes.c_char_p]
     xlib.XOpenDisplay.restype = ctypes.POINTER(ctypes.c_void_p)
+    xlib.XFree.argtypes = [ctypes.c_void_p]
+    xlib.XFree.restype = None
 
     xinerama = load_library("Xinerama")
 
@@ -44,6 +46,8 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
             yield Monitor(
                 x=info.x, y=info.y, width=info.width, height=info.height
             )
+
+        xlib.XFree(infos)
 
     finally:
         xlib.XCloseDisplay.restype = ctypes.POINTER(ctypes.c_void_p)

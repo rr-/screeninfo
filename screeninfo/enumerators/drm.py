@@ -114,6 +114,9 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
         DRM_MODE_CONNECTOR_eDP = 14
         DRM_MODE_CONNECTOR_VIRTUAL = 15
         DRM_MODE_CONNECTOR_DSI = 16
+        DRM_MODE_CONNECTOR_DPI = 17
+        DRM_MODE_CONNECTOR_WRITEBACK = 18
+        DRM_MODE_CONNECTOR_SPI = 19
 
         _fields_ = [
             ("connector_id", ctypes.c_uint32),
@@ -205,6 +208,34 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
     DRM_DIR_NAME = "/dev/dri"
     DRM_DEV_NAME = "%s/card%d"
 
+    def get_connector_name(connector: "DrmModeConnector") -> str:
+        try:
+            prefix = {
+                DrmModeConnector.DRM_MODE_CONNECTOR_Unknown: "Unknown",
+                DrmModeConnector.DRM_MODE_CONNECTOR_VGA: "VGA",
+                DrmModeConnector.DRM_MODE_CONNECTOR_DVII: "DVI-I",
+                DrmModeConnector.DRM_MODE_CONNECTOR_DVID: "DVI-D",
+                DrmModeConnector.DRM_MODE_CONNECTOR_DVIA: "DVI-A",
+                DrmModeConnector.DRM_MODE_CONNECTOR_Composite: "Composite",
+                DrmModeConnector.DRM_MODE_CONNECTOR_SVIDEO: "SVIDEO",
+                DrmModeConnector.DRM_MODE_CONNECTOR_LVDS: "LVDS",
+                DrmModeConnector.DRM_MODE_CONNECTOR_Component: "Component",
+                DrmModeConnector.DRM_MODE_CONNECTOR_9PinDIN: "DIN",
+                DrmModeConnector.DRM_MODE_CONNECTOR_DisplayPort: "DP",
+                DrmModeConnector.DRM_MODE_CONNECTOR_HDMIA: "HDMI-A",
+                DrmModeConnector.DRM_MODE_CONNECTOR_HDMIB: "HDMI-B",
+                DrmModeConnector.DRM_MODE_CONNECTOR_TV: "TV",
+                DrmModeConnector.DRM_MODE_CONNECTOR_eDP: "eDP",
+                DrmModeConnector.DRM_MODE_CONNECTOR_VIRTUAL: "Virtual",
+                DrmModeConnector.DRM_MODE_CONNECTOR_DSI: "DSI",
+                DrmModeConnector.DRM_MODE_CONNECTOR_DPI: "DPI",
+                DrmModeConnector.DRM_MODE_CONNECTOR_WRITEBACK: "Writeback",
+                DrmModeConnector.DRM_MODE_CONNECTOR_SPI: "SPI",
+            }[connector.connector_type]
+        except KeyError:
+            prefix = "Unknown"
+        return f"{prefix}-{connector.connector_type_id}"
+
     for card_no in range(DRM_MAX_MINOR):
         card_path = DRM_DEV_NAME % (DRM_DIR_NAME, card_no)
         try:
@@ -224,13 +255,16 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
             res.needs_free = True
 
             for connector in res.connectors:
-                if connector.connection != DrmModeConnector.DRM_MODE_CONNECTED:
+                if connector.connection == DrmModeConnector.DRM_MODE_CONNECTED:
                     crtc = connector.encoder.crtc
                     yield Monitor(
                         x=crtc.x,
                         y=crtc.y,
                         width=crtc.width,
                         height=crtc.height,
+                        width_mm=connector.mmWidth,
+                        height_mm=connector.mmHeight,
+                        name=get_connector_name(connector),
                     )
 
         finally:
