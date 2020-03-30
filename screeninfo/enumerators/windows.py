@@ -60,21 +60,22 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
     # resolution and not a virtualized resolution reported by
     # Windows when DPI virtualization is in use.
     ctypes.windll.user32.SetProcessDPIAware()
-    # Create a Device Context for the full virtual desktop.
-    dc_full = ctypes.windll.user32.GetDC(None)
-    retry = 0
-    while dc_full < 0:
+    # On Python 3.8.X GetDC randomly fails returning an invalid DC.
+    # To workaround this request a number of DCs until a valid DC is returned.
+    for retry in range(100):
+        # Create a Device Context for the full virtual desktop.
+        dc_full = ctypes.windll.user32.GetDC(None)
+        if dc_full > 0:
+            # Got a valid DC, break.
+            break
         ctypes.windll.user32.ReleaseDC(dc_full)
-        if retry < 100:
-            dc_full = ctypes.windll.user32.GetDC(None)
-            retry += 1
-        else:
-            # Fallback to device context 0 that is the whole
-            # desktop. This allows fetching resolutions
-            # but monitor specific device contexts are not
-            # passed to the callback which means that physical
-            # sizes can't be read.
-            dc_full = 0
+    else:
+        # Fallback to device context 0 that is the whole
+        # desktop. This allows fetching resolutions
+        # but monitor specific device contexts are not
+        # passed to the callback which means that physical
+        # sizes can't be read.
+        dc_full = 0
     # Call EnumDisplayMonitors with the non-NULL DC
     # so that non-NULL DCs are passed onto the callback.
     # We want monitor specific DCs in the callback.
