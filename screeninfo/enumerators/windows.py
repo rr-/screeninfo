@@ -59,7 +59,8 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
     # Make the process DPI aware so it will detect the actual
     # resolution and not a virtualized resolution reported by
     # Windows when DPI virtualization is in use.
-    ctypes.windll.user32.SetProcessDPIAware()
+    # benshep 2020-03-31: this gives the correct behaviour on Windows 10 when multiple monitors have different DPIs
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)
     # On Python 3.8.X GetDC randomly fails returning an invalid DC.
     # To workaround this request a number of DCs until a valid DC is returned.
     for retry in range(100):
