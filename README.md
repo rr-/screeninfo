@@ -36,8 +36,8 @@ for m in get_monitors():
 
 **Output**:
 
->monitor(1920x1080+1920+0)  
->monitor(1920x1080+0+0)
+>Monitor(x=1920, y=0, width=1920, height=1080, name=None)  
+>Monitor(x=0, y=0, width=1920, height=1080, name=None)
 
 ### Forcing environment
 
@@ -46,8 +46,8 @@ driver directly. You can do so by passing extra parameter to `get_monitors()`
 like this:
 
 ```python
-from screeninfo import get_monitors
-for m in get_monitors('osx'):
+from screeninfo import get_monitors, Enumerator
+for m in get_monitors(Enumerator.OSX):
     print(str(m))
 ```
 
