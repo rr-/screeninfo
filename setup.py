@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name="screeninfo",
@@ -12,7 +12,7 @@ setup(
     classifiers=[],
     install_requires=[
         "dataclasses",
-        'Cython ; platform_system=="darwin"',
-        'pyobjus ; platform_system=="darwin"',
+        'Cython ; sys_platform=="darwin"',
+        'pyobjus ; sys_platform=="darwin"',
     ],
 )
