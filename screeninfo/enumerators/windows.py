@@ -103,7 +103,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
     # multiple monitors have different DPIs.
     ctypes.windll.shcore.SetProcessDpiAwareness(2)
 
-    hwnd = HDC(None)
+    hwnd = HWND(None)
     # On Python 3.8.X GetDC randomly fails returning an invalid DC.
     # To workaround this request a number of DCs until a valid DC is returned.
     for retry in range(100):
@@ -124,14 +124,15 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
     # Call EnumDisplayMonitors with the non-NULL DC
     # so that non-NULL DCs are passed onto the callback.
     # We want monitor specific DCs in the callback.
+
     EnumDisplayMonitors(
         dc_full,
-        None,
+        LPRECT(None),
         # Make sure you keep references to CFUNCTYPE() or WINFUNCTYPE() objects as long as they are
         # used from C code. ctypes doesn’t, and if you don’t, they may be garbage collected,
         # crashing your program when a callback is made.
         MonitorEnumProc(callback),
-        0
+        LPARAM(0)
     )
     ReleaseDC(hwnd, dc_full)
 
