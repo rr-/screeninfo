@@ -10,5 +10,9 @@ setup(
     url="https://github.com/rr-/screeninfo",
     keywords=["screen", "monitor", "desktop"],
     classifiers=[],
-    install_requires=["dataclasses"],
+    install_requires=[
+        "dataclasses",
+        'Cython ; platform_system=="darwin"',
+        'pyobjus ; platform_system=="darwin"',
+    ],
 )
