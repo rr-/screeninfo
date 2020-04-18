@@ -63,17 +63,18 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
         LPARAM,  # data
     )
 
+    LPCRECT = ctypes.POINTER(RECT)
     # https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdisplaymonitors
     EnumDisplayMonitors = ctypes.windll.user32.EnumDisplayMonitors
     EnumDisplayMonitors.restype = BOOL
-    EnumDisplayMonitors.argtype = (HDC, LPRECT, MonitorEnumProc, LPARAM)
+    EnumDisplayMonitors.argtype = (HDC, LPCRECT, MonitorEnumProc, LPARAM)
 
     monitors = []
 
-    def callback(monitor: T.Any, dc: T.Any, rect: T.Any, data: T.Any) -> int:
+    def callback(monitor: int, dc: int, rect: LPRECT, data: int) -> bool:
         info = MONITORINFOEXW()
         info.cbSize = ctypes.sizeof(MONITORINFOEXW)
-        if GetMonitorInfoW(monitor, ctypes.byref(info)):
+        if GetMonitorInfoW(monitor, ctypes.pointer(info)):
             name = info.szDevice
         else:
             name = None
@@ -93,7 +94,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
                 name=name,
             )
         )
-        return 1
+        return True
 
     # Make the process DPI aware so it will detect the actual
     # resolution and not a virtualized resolution reported by
@@ -121,17 +122,25 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
         # passed to the callback which means that physical
         # sizes can't be read.
         dc_full = HDC(None)
+
+    # Make sure you keep references to CFUNCTYPE() or WINFUNCTYPE() objects as long as they are
+    # used from C code. ctypes doesn’t, and if you don’t, they may be garbage collected,
+    # crashing your program when a callback is made.
+    monEnumProc = MonitorEnumProc(callback)
+    monEnumProc.restype = BOOL
+    monEnumProc.argtypes = [
+        HMONITOR,  # monitor
+        HDC,  # dc
+        LPRECT,  # rect
+        LPARAM,  # data
+    ]
     # Call EnumDisplayMonitors with the non-NULL DC
     # so that non-NULL DCs are passed onto the callback.
     # We want monitor specific DCs in the callback.
-
     EnumDisplayMonitors(
         dc_full,
-        LPRECT(None),
-        # Make sure you keep references to CFUNCTYPE() or WINFUNCTYPE() objects as long as they are
-        # used from C code. ctypes doesn’t, and if you don’t, they may be garbage collected,
-        # crashing your program when a callback is made.
-        MonitorEnumProc(callback),
+        LPCRECT(),
+        monEnumProc,
         LPARAM(0)
     )
     ReleaseDC(hwnd, dc_full)
