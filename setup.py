@@ -11,7 +11,7 @@ setup(
     keywords=["screen", "monitor", "desktop"],
     classifiers=[],
     install_requires=[
-        "dataclasses",
+        "dataclasses ; python_version<'3.7'",
         'Cython ; sys_platform=="darwin"',
         'pyobjus ; sys_platform=="darwin"',
     ],
