@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name="screeninfo",
     packages=["screeninfo", "screeninfo.enumerators"],
-    version="0.6.5",
+    version="0.6.6",
     description="Fetch location and size of physical screens.",
     author="rr-",
     author_email="rr-@sakuya.pl",
