@@ -16,11 +16,9 @@ setup(
     url="https://github.com/rr-/screeninfo",
     keywords=["screen", "monitor", "desktop"],
     classifiers=[
-        'Operating System :: MacOS :: MacOS X :: PyOBJus',
+        'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
-        'Operating System :: Microsoft :: Windows :: Cygwin',
-        'Operating System :: Linux :: X11',
-        'Operating System :: Linux :: DRM :: Experimental'
+        'Operating System :: POSIX :: Linux',
     ],
     install_requires=[
         "dataclasses ; python_version<'3.7'",
