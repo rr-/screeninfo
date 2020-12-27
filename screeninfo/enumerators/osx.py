@@ -4,15 +4,12 @@ from screeninfo.common import Monitor
 
 
 def enumerate_monitors() -> T.Iterable[Monitor]:
-    from pyobjus import autoclass
-    from pyobjus.dylib_manager import INCLUDE, load_framework
+    from AppKit import NSScreen
 
-    load_framework(INCLUDE.AppKit)
+    screens = NSScreen.screens()
 
-    screens = autoclass("NSScreen").screens()
-
-    for i in range(screens.count()):
-        f = screens.objectAtIndex_(i).frame
+    for screen in screens:
+        f = screen.frame
         if callable(f):
             f = f()
 
