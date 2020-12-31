@@ -22,7 +22,6 @@ setup(
     ],
     install_requires=[
         "dataclasses ; python_version<'3.7'",
-        'Cython ; sys_platform=="darwin"',
         'pyobjc-framework-Cocoa ; sys_platform=="darwin"',
     ],
 )
