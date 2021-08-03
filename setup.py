@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 setup(
     name="screeninfo",
     packages=["screeninfo", "screeninfo.enumerators"],
-    version="0.6.7",
+    version="0.7",
     description="Fetch location and size of physical screens.",
     long_description=long_description,
     long_description_content_type="text/markdown",
