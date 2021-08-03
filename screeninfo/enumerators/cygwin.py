@@ -44,6 +44,9 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
 
     monitors = []
 
+    def check_primary(rct):
+        return rct.left == 0 and rct.top == 0
+
     def callback(monitor: T.Any, dc: T.Any, rect: T.Any, data: T.Any) -> int:
         rct = rect.contents
         monitors.append(
@@ -52,6 +55,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
                 y=rct.top,
                 width=rct.right - rct.left,
                 height=rct.bottom - rct.top,
+                is_primary=check_primary(rct)
             )
         )
         return 1
