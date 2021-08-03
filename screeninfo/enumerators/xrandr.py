@@ -114,7 +114,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
                         name=output_info.contents.name.decode(
                             sys.getfilesystemencoding()
                         ),
-                        is_primary=check_primary(primary_id, crtc_info)
+                        is_primary=check_primary(primary_id, crtc_info),
                     )
 
                 finally:

@@ -24,5 +24,5 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
             y=int(f.origin.y),
             width=int(f.size.width),
             height=int(f.size.height),
-            is_primary=check_primary(screens, screen)
+            is_primary=check_primary(screens, screen),
         )

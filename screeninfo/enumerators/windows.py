@@ -55,7 +55,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
                 width_mm=h_size,
                 height_mm=v_size,
                 name=name,
-                is_primary=check_primary(rct)
+                is_primary=check_primary(rct),
             )
         )
         return 1
