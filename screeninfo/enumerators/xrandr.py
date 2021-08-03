@@ -59,6 +59,9 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
             ("modes", ctypes.POINTER(ctypes.c_ulong)),
         ]
 
+    def check_primary(display_id, crtc):
+        return display_id == crtc.contents.outputs.contents.value
+
     xlib = load_library("X11")
     xlib.XOpenDisplay.argtypes = [ctypes.c_char_p]
     xlib.XOpenDisplay.restype = ctypes.POINTER(ctypes.c_void_p)
@@ -98,6 +101,8 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
                     output_info.contents.crtc,
                 )
 
+                primary_id = xrandr.XRRGetOutputPrimary(display, root_window)
+
                 try:
                     yield Monitor(
                         x=crtc_info.contents.x,
@@ -109,6 +114,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
                         name=output_info.contents.name.decode(
                             sys.getfilesystemencoding()
                         ),
+                        is_primary=check_primary(primary_id, crtc_info)
                     )
 
                 finally:
