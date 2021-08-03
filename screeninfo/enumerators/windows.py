@@ -31,6 +31,9 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
 
     monitors = []
 
+    def check_primary(rct):
+        return rct.left == 0 and rct.top == 0
+
     def callback(monitor: T.Any, dc: T.Any, rect: T.Any, data: T.Any) -> int:
         info = MONITORINFOEXW()
         info.cbSize = ctypes.sizeof(MONITORINFOEXW)
@@ -52,6 +55,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
                 width_mm=h_size,
                 height_mm=v_size,
                 name=name,
+                is_primary=check_primary(rct)
             )
         )
         return 1
