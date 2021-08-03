@@ -3,6 +3,12 @@ import typing as T
 from screeninfo.common import Monitor
 
 
+# https://developer.apple.com/documentation/appkit/nsscreen/1388371-main
+# first entry in array is always the primary screen
+def check_primary(screens, screen):
+    return screen == screens[0]
+
+
 def enumerate_monitors() -> T.Iterable[Monitor]:
     from AppKit import NSScreen
 
@@ -18,4 +24,5 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
             y=int(f.origin.y),
             width=int(f.size.width),
             height=int(f.size.height),
+            is_primary=check_primary(screens, screen)
         )
