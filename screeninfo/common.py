@@ -14,6 +14,7 @@ class Monitor:
     width_mm: T.Optional[int] = None
     height_mm: T.Optional[int] = None
     name: T.Optional[str] = None
+    is_primary: T.Optional[bool] = None
 
     def __repr__(self) -> str:
         return (
@@ -21,7 +22,8 @@ class Monitor:
             f"x={self.x}, y={self.y}, "
             f"width={self.width}, height={self.height}, "
             f"width_mm={self.width_mm}, height_mm={self.height_mm}, "
-            f"name={self.name!r}"
+            f"name={self.name!r}, "
+            f"is_primary={self.is_primary}"
             f")"
         )
 
