@@ -36,8 +36,10 @@ for m in get_monitors():
 
 **Output**:
 
->Monitor(x=1920, y=0, width=1920, height=1080, width_mm=None, height_mm=None, name=None, is_primary=False)
->Monitor(x=0, y=0, width=1920, height=1080, width_mm=None, height_mm=None, name=None, is_primary=True)
+```python console
+Monitor(x=3840, y=0, width=3840, height=2160, width_mm=1420, height_mm=800, name='HDMI-0', is_primary=False)
+Monitor(x=0, y=0, width=3840, height=2160, width_mm=708, height_mm=399, name='DP-0', is_primary=True)
+```
 
 ### Forcing environment
 
