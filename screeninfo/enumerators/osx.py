@@ -5,7 +5,7 @@ from screeninfo.common import Monitor
 
 # https://developer.apple.com/documentation/appkit/nsscreen/1388371-main
 # first entry in array is always the primary screen
-def check_primary(screens, screen):
+def check_primary(screens: T.Any, screen: T.Any) -> bool:
     return screen == screens[0]
 
 

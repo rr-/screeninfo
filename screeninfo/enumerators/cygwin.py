@@ -44,7 +44,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
 
     monitors = []
 
-    def check_primary(rct):
+    def check_primary(rct: T.Any) -> bool:
         return rct.left == 0 and rct.top == 0
 
     def callback(monitor: T.Any, dc: T.Any, rect: T.Any, data: T.Any) -> int:

@@ -59,7 +59,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
             ("modes", ctypes.POINTER(ctypes.c_ulong)),
         ]
 
-    def check_primary(display_id, crtc):
+    def check_primary(display_id: int, crtc: XRRCrtcInfo) -> bool:
         return display_id == crtc.contents.outputs.contents.value
 
     xlib = load_library("X11")
