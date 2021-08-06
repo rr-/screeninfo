@@ -1,6 +1,4 @@
-import importlib
 import typing as T
-from pathlib import Path
 
 from screeninfo import enumerators
 from screeninfo.common import Enumerator, Monitor, ScreenInfoError
