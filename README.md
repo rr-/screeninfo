@@ -1,6 +1,8 @@
 screeninfo
 ----------
 
+[![Build](https://github.com/rr-/screeninfo/actions/workflows/build.yml/badge.svg)](https://github.com/rr-/screeninfo/actions/workflows/build.yml)
+
 Fetch location and size of physical screens.
 
 ### Supported environments
