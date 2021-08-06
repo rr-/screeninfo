@@ -54,3 +54,8 @@ for m in get_monitors(Enumerator.OSX):
 ```
 
 Available drivers: `windows`, `cygwin`, `x11`, `osx`.
+
+# Contributing
+
+This project uses [precommit](https://pre-commit.com/). You can install it with
+`python3 -m pip install --user pre-commit` and running `pre-commit install`.

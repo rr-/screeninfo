@@ -7,6 +7,7 @@ from screeninfo.common import Monitor, ScreenInfoError
 def enumerate_monitors() -> T.Iterable[Monitor]:
     import ctypes
     import ctypes.util
+
     from screeninfo.util import load_library
 
     libdrm = load_library("drm")

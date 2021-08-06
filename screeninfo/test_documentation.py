@@ -1,7 +1,8 @@
 import re
 from pathlib import Path
-from screeninfo import Monitor
 from unittest.mock import patch
+
+from screeninfo import Monitor
 
 README_PATH = Path(__file__).parent.parent / "README.md"
 
