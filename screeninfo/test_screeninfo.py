@@ -25,7 +25,9 @@ def test_get_monitors_has_at_least_one_monitor():
 
 def test_get_primary_does_not_raise():
     with not_raises(Exception):
-        assert (get_primary()[0] * 0, get_primary()[1] * 0) == (0, 0)
+        primary = get_primary()
+
+        assert (primary[0] * 0, primary[1] * 0) == (0, 0)
 
 
 def test_get_primary_has_two_values():
