@@ -2,7 +2,7 @@ from contextlib import contextmanager
 
 import pytest
 
-from screeninfo import get_monitors
+from screeninfo import get_monitors, get_primary
 
 
 @contextmanager
@@ -21,3 +21,12 @@ def test_get_monitors_does_not_raise():
 def test_get_monitors_has_at_least_one_monitor():
     # GitHub actions have no physical monitors
     assert len(list(get_monitors())) >= 0
+
+
+def test_get_primary_does_not_raise():
+    with not_raises(Exception):
+        assert (get_primary()[0] * 0, get_primary()[1] * 0) == (0, 0)
+
+
+def test_get_primary_has_two_values():
+    assert len(tuple(get_primary())) == 2
