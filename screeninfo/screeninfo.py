@@ -33,3 +33,9 @@ def get_monitors(
             pass
 
     raise ScreenInfoError("No enumerators available")
+
+
+def get_primary() -> T.Tuple[int, int]:
+    """Returns a tuple of (width, height) of your primary monitor."""
+
+    return tuple(list(map(lambda monitor: (monitor.width, monitor.height), filter(lambda monitor: monitor.is_primary, get_monitors())))[0])
