@@ -38,7 +38,7 @@ def get_monitors(
 def get_primary() -> T.Tuple[int, int]:
     """Returns a tuple of (width, height) of your primary monitor."""
 
-    primary = list(map(lambda monitor: (monitor.width, monitor.height), filter(lambda monitor: monitor.is_primary, get_monitors())))
+    primary = list(map(lambda m: (m.width, m.height), filter(lambda m: m.is_primary, get_monitors())))
 
     if primary:
         return tuple(primary[0])
