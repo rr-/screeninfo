@@ -13,10 +13,6 @@ ENUMERATOR_MAP = {
 }
 
 
-def _get_monitors(enumerator: Enumerator) -> T.List[Monitor]:
-    return list(ENUMERATOR_MAP[enumerator].enumerate_monitors())
-
-
 def get_monitors(
     name: T.Union[Enumerator, str, None] = None
 ) -> T.List[Monitor]:
@@ -24,12 +20,15 @@ def get_monitors(
     enumerator = Enumerator(name) if name is not None else None
 
     if enumerator is not None:
-        return _get_monitors(enumerator)
+        return list(ENUMERATOR_MAP[enumerator].enumerate_monitors())
 
-    for enumerator in Enumerator:
+    for enumerator in ENUMERATOR_MAP.keys():
         try:
-            return _get_monitors(enumerator)
-        except Exception:
-            pass
+            monitors = get_monitors(enumerator)
+        except Exception as ex:
+            monitors = []
+
+        if monitors:
+            return monitors
 
     raise ScreenInfoError("No enumerators available")
