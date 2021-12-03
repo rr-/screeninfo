@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "screeninfo"
-version = "0.7"
+version = "0.8"
 description = "Fetch location and size of physical screens."
 authors = ["Marcin Kurczewski <rr-@sakuya.pl>"]
 license = "MIT"
