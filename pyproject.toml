@@ -1,3 +1,45 @@
+[tool.poetry]
+name = "screeninfo"
+version = "0.7"
+description = "Fetch location and size of physical screens."
+authors = ["Marcin Kurczewski <rr-@sakuya.pl>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/rr-/screeninfo"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Desktop Environment",
+    "Topic :: System :: Operating System",
+]
+packages = [
+    { include = "screeninfo" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.6.2"
+dataclasses = { version = "*", python = "<3.7" }
+Cython = { version = "*", platform = "darwin" }
+pyobjc-framework-Cocoa = { version = "*", platform = "darwin" }
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+black = "^21.11b1"
+pre-commit = "^2.16.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.black]
 line-length = 79
 py36 = true
