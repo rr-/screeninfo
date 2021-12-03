@@ -1,3 +1,4 @@
+import os
 from contextlib import contextmanager
 
 import pytest
@@ -18,6 +19,9 @@ def test_get_monitors_does_not_raise():
         list(get_monitors())
 
 
+@pytest.mark.skipif(
+    os.environ.get("CI") == "true",
+    reason="GitHub actions have no physical monitors",
+)
 def test_get_monitors_has_at_least_one_monitor():
-    # GitHub actions have no physical monitors
-    assert len(list(get_monitors())) >= 0
+    assert len(list(get_monitors())) > 0
