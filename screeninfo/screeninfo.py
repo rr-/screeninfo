@@ -17,10 +17,8 @@ def get_monitors(
     name: T.Union[Enumerator, str, None] = None
 ) -> T.List[Monitor]:
     """Returns a list of :class:`Monitor` objects based on active monitors."""
-    enumerator = Enumerator(name) if name is not None else None
-
-    if enumerator is not None:
-        return list(ENUMERATOR_MAP[enumerator].enumerate_monitors())
+    if name is not None:
+        return list(ENUMERATOR_MAP[Enumerator(name)].enumerate_monitors())
 
     for enumerator in ENUMERATOR_MAP.keys():
         try:
