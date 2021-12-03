@@ -38,12 +38,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-        architecture: x64
+      - uses: actions/checkout@v2
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+          architecture: x64
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
@@ -59,5 +59,5 @@ jobs:
         run: poetry install --no-interaction --no-root
       - name: Install library
         run: poetry install --no-interaction
-    - name: Run pre-commit
-      run: poetry run pre-commit run -a
+      - name: Run pre-commit
+        run: poetry run pre-commit run -a
