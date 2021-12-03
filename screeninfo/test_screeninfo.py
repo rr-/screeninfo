@@ -94,3 +94,51 @@ def test_get_monitors_uses_first_working_enumerator():
         enumerator1.enumerate_monitors.assert_called_once()
         enumerator2.enumerate_monitors.assert_called_once()
         enumerator3.enumerate_monitors.assert_not_called()
+
+
+@pytest.mark.parametrize("param", ["windows", Enumerator.Windows])
+def test_get_monitors_with_concrete_enumerator(param):
+    enumerator = mock.Mock(
+        enumerate_monitors=mock.Mock(
+            return_value=[Monitor(x=0, y=0, width=800, height=600)]
+        )
+    )
+    with mock.patch(
+        "screeninfo.screeninfo.ENUMERATOR_MAP",
+        {Enumerator.Windows: enumerator},
+    ) as mock_get_monitors:
+        monitors = get_monitors(param)
+        assert len(monitors) == 1
+        assert monitors[0].x == 0
+        assert monitors[0].y == 0
+        assert monitors[0].width == 800
+        assert monitors[0].height == 600
+        enumerator.enumerate_monitors.assert_called_once()
+
+
+def test_get_monitors_with_invalid_enumerator():
+    enumerator = mock.Mock(
+        enumerate_monitors=mock.Mock(
+            return_value=[Monitor(x=0, y=0, width=800, height=600)]
+        )
+    )
+    with mock.patch(
+        "screeninfo.screeninfo.ENUMERATOR_MAP",
+        {Enumerator.Windows: enumerator},
+    ) as mock_get_monitors:
+        with pytest.raises(ValueError):
+            monitors = get_monitors("Invalid")
+
+
+def test_get_monitors_with_unlisted_enumerator():
+    enumerator = mock.Mock(
+        enumerate_monitors=mock.Mock(
+            return_value=[Monitor(x=0, y=0, width=800, height=600)]
+        )
+    )
+    with mock.patch(
+        "screeninfo.screeninfo.ENUMERATOR_MAP",
+        {Enumerator.Windows: enumerator},
+    ) as mock_get_monitors:
+        with pytest.raises(KeyError):
+            monitors = get_monitors(Enumerator.OSX)
