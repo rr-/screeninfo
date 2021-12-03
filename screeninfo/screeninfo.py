@@ -28,7 +28,9 @@ def get_monitors(
 
     for enumerator in Enumerator:
         try:
-            return _get_monitors(enumerator)
+            result = _get_monitors(enumerator)
+            assert result
+            return result
         except Exception:
             pass
 
