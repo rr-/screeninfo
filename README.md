@@ -22,12 +22,6 @@ I strongly encourage pull requests.
 pip install screeninfo
 ```
 
-If you install it from sources:
-
-```
-python3 setup.py install
-```
-
 ### Usage
 
 ```python
@@ -59,5 +53,14 @@ Available drivers: `windows`, `cygwin`, `x11`, `osx`.
 
 # Contributing
 
-This project uses [precommit](https://pre-commit.com/). You can install it with
-`python3 -m pip install --user pre-commit` and running `pre-commit install`.
+
+```sh
+git clone https://github.com/rr-/screeninfo.git # clone this repo
+cd screeninfo
+poetry install # to install the local venv
+poetry run pre-commit install # to setup pre-commit hooks
+poetry shell # to enter the venv
+```
+
+This project uses [poetry](https://python-poetry.org/) for packaging,
+install instructions at [poetry#installation](https://python-poetry.org/docs/#installation)
