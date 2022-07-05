@@ -237,6 +237,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
             prefix = "Unknown"
         return f"{prefix}-{connector.connector_type_id}"
 
+    got_resources = False
     for card_no in range(DRM_MAX_MINOR):
         card_path = DRM_DEV_NAME % (DRM_DIR_NAME, card_no)
         try:
@@ -249,7 +250,8 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
         try:
             res = libdrm.drmModeGetResources(fd)
             if not res:
-                raise ScreenInfoError("Failed to get drm resources")
+                continue
+            got_resources = True
 
             res = res.contents
             res.fd = fd
@@ -270,3 +272,6 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
 
         finally:
             os.close(fd)
+
+    if not got_resources:
+        raise ScreenInfoError("Failed to get drm resources")
