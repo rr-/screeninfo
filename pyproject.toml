@@ -20,10 +20,9 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Topic :: Desktop Environment",
     "Topic :: System :: Operating System",
+    "Typing :: Typed",
 ]
-packages = [
-    { include = "screeninfo" },
-]
+packages = [{ include = "screeninfo" }]
 
 [tool.poetry.dependencies]
 python = "^3.6.2"
