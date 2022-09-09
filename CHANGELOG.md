@@ -1,3 +1,7 @@
+# 0.8.1 (2022-09-09)
+
+- Added typing information
+
 # 0.8 (2021-12-04)
 
 - Started tracking changes
