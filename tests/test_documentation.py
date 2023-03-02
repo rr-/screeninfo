@@ -42,6 +42,7 @@ def test_documentation(capsys) -> None:
                 height_mm=800,
                 name="HDMI-0",
                 is_primary=False,
+                effective_dpi=(96, 96),
             ),
             Monitor(
                 x=0,
@@ -52,6 +53,7 @@ def test_documentation(capsys) -> None:
                 height_mm=399,
                 name="DP-0",
                 is_primary=True,
+                effective_dpi=(120, 120),
             ),
         ],
     ):

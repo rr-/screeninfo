@@ -34,6 +34,16 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
     def check_primary(rct: T.Any) -> bool:
         return rct.left == 0 and rct.top == 0
 
+    def get_effective_dpi(monitor: T.Any) -> tuple:
+        dpi_x = ctypes.c_uint()
+        dpi_y = ctypes.c_uint()
+
+        ctypes.windll.shcore.GetDpiForMonitor(
+            monitor, 0, ctypes.byref(dpi_x), ctypes.byref(dpi_y)
+        )
+
+        return (dpi_x, dpi_y)
+
     def callback(monitor: T.Any, dc: T.Any, rect: T.Any, data: T.Any) -> int:
         info = MONITORINFOEXW()
         info.cbSize = ctypes.sizeof(MONITORINFOEXW)
@@ -56,6 +66,7 @@ def enumerate_monitors() -> T.Iterable[Monitor]:
                 height_mm=v_size,
                 name=name,
                 is_primary=check_primary(rct),
+                effective_dpi=get_effective_dpi(monitor),
             )
         )
         return 1
