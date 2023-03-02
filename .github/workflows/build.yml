@@ -1,6 +1,10 @@
 name: Build
 
-on: [push]
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
 
 jobs:
   build:
@@ -28,11 +32,11 @@ jobs:
           path: ~/.cache
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
-        run: poetry install --no-interaction --no-root
+        run: python3 -m poetry install --no-interaction --no-root
       - name: Install library
-        run: poetry install --no-interaction
+        run: python3 -m poetry install --no-interaction
       - name: Run tests
-        run: poetry run pytest
+        run: python3 -m poetry run pytest
 
   style:
     runs-on: ubuntu-latest
