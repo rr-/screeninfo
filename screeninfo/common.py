@@ -19,7 +19,7 @@ class Monitor:
 
     @property
     def ppmm(self) -> T.Optional[T.Tuple[float, float]]:
-        if self.width_mm is None or self.height_mm is None:
+        if not self.width_mm or not self.height_mm:
             return None
         return (self.width/self.width_mm, self.height/self.height_mm)
 
