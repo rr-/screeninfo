@@ -30,3 +30,7 @@ def get_monitors(
             return monitors
 
     raise ScreenInfoError("No enumerators available")
+
+def get_primary_monitor() -> Monitor:
+    """Returns the primary monitor by :class:`Monitor`."""
+    return [m for m in get_monitors() if m.is_primary][0]
